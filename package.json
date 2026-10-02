@@ -2,6 +2,17 @@
   "name": "pullsheets",
   "version": "0.1.0",
   "private": true,
+  "description": "Turn a GitHub pull request into a share-ready image or clip for X, LinkedIn and Instagram.",
+  "license": "MIT",
+  "author": "Yash Saini",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yashksaini-coder/PullSheets.git"
+  },
+  "bugs": {
+    "url": "https://github.com/yashksaini-coder/PullSheets/issues"
+  },
+  "homepage": "https://github.com/yashksaini-coder/PullSheets#readme",
   "engines": {
     "node": ">=20.0.0"
   },
