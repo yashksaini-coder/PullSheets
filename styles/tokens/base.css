@@ -1,0 +1,18 @@
+/* Minimal base — mirrors @layer base in globals.css. Consumers get body colors, tracking, thin scrollbars and the marketing heading gradient. */
+html{height:100%}
+body{margin:0;min-height:100%;width:100%;background:var(--background);color:var(--foreground);font-family:var(--font-sans);font-size:var(--text-sm);letter-spacing:var(--tracking-normal);-webkit-font-smoothing:antialiased;overflow-x:hidden}
+a{color:var(--foreground);text-decoration:none}a:hover{color:var(--primary)}
+button,a,[role="button"]{touch-action:manipulation}
+*{scrollbar-width:thin;scrollbar-color:var(--border) transparent}
+*::-webkit-scrollbar{width:6px;height:6px}*::-webkit-scrollbar-track{background:transparent}*::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}*::-webkit-scrollbar-thumb:hover{background:var(--muted-foreground)}
+.scrollbar-hide{scrollbar-width:none}.scrollbar-hide::-webkit-scrollbar{display:none}
+/* Landing headings: white→transparent vertical wash (.landing-heading in globals.css) */
+.landing-heading{background-image:linear-gradient(to bottom,rgba(255,255,255,.38) 0%,rgba(255,255,255,.72) 42%,#fff 100%);-webkit-background-clip:text;background-clip:text;color:transparent}
+.light .landing-heading{background-image:linear-gradient(to bottom,rgba(30,27,26,.55) 0%,rgba(30,27,26,.8) 42%,#1E1B1A 100%)}
+@keyframes ds-marquee{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+@keyframes ds-spin{to{transform:rotate(360deg)}}
+@keyframes ds-pulse{0%,100%{opacity:1}50%{opacity:.5}}
+@keyframes ds-fade-zoom-in{from{opacity:0;transform:scale(.95)}to{opacity:1;transform:scale(1)}}
+@keyframes ds-slide-in-right{from{transform:translateX(100%)}to{transform:translateX(0)}}
+@keyframes ds-slide-in-left{from{transform:translateX(-100%)}to{transform:translateX(0)}}
+@keyframes ds-loading-card{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}

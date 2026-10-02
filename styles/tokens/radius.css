@@ -1,0 +1,12 @@
+/* --radius: .5rem from globals.css; sm/md/lg/xl are the shadcn derivations. Extra values are literal from components. */
+:root{
+  --radius:8px;
+  --radius-xs:2px;--radius-sm:4px;--radius-md:6px;--radius-lg:8px;--radius-xl:12px;--radius-2xl:16px;--radius-3xl:24px;--radius-full:9999px;
+  --radius-segment:5px;   /* segmented-control indicator + options */
+  --radius-tile:10px;     /* preset tiles (StyleSection/ShadowSection) */
+  --radius-control:6px;   /* buttons, inputs, popovers, dialogs (rounded-md) */
+  --radius-card:12px;     /* Card (rounded-xl) */
+  --radius-section:16px;  /* landing cards, FAQ rows, footer, bento (rounded-2xl / 1rem) */
+  --radius-nav:24px;      /* scrolled nav pill */
+  --radius-canvas-default:24px; /* "Rounded" preset for the image on canvas */
+}

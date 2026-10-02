@@ -1,0 +1,77 @@
+/* PR Studio color tokens. Structure mirrors screenshot-studio/app/globals.css (shadcn semantic names) so every token maps 1:1 onto the codebase; values are re-themed warm red + warm black. Dark is the product default (source hardcodes <html class="dark">), so :root IS dark. Add .light on <html> for the light theme. */
+:root{
+  /* ---- Brand: warm red scale (hue ~22°, leans orange) ---- */
+  --red-50:#FEF3EF;--red-100:#FDE3DB;--red-200:#FBC2B3;--red-300:#F79A83;--red-400:#F26E52;--red-500:#E8452B;--red-600:#CC3820;--red-700:#A82D19;--red-800:#7F2314;--red-900:#561A0F;--red-950:#2E0C07;
+  --red-rgb:232,69,43;/* @kind other */
+  /* ---- Warm neutrals (a hair of red in every grey) ---- */
+  --neutral-0:#FFFFFF;--neutral-50:#F5F3F2;--neutral-100:#E8E4E1;--neutral-200:#D3CDC9;--neutral-300:#A39D99;--neutral-400:#7D7773;--neutral-500:#5A5552;--neutral-600:#3A3634;--neutral-700:#2C2826;--neutral-800:#241F1E;--neutral-850:#1E1A19;--neutral-900:#171312;--neutral-950:#0B0A0A;--neutral-1000:#000000;
+  /* ---- Semantic surfaces & text (shadcn names) ---- */
+  --background:var(--neutral-950);
+  --foreground:var(--neutral-100);
+  --card:var(--neutral-900);
+  --card-foreground:var(--neutral-100);
+  --popover:var(--neutral-900);
+  --popover-foreground:var(--neutral-100);
+  --primary:var(--red-500);
+  --primary-foreground:#FFFFFF;
+  --primary-hover:var(--red-400);
+  --primary-active:var(--red-600);
+  --secondary:var(--neutral-850);
+  --secondary-foreground:var(--neutral-100);
+  --muted:var(--neutral-850);
+  --muted-foreground:var(--neutral-300);
+  --accent:var(--neutral-800);
+  --accent-foreground:#FFFFFF;
+  --destructive:#F43F5E;
+  --destructive-foreground:#FFFFFF;
+  --success:#30D158;
+  --warning:#FF9F0A;
+  --info:var(--foreground);
+  --border:var(--neutral-700);
+  --input:var(--neutral-700);
+  --ring:var(--red-400);
+  --sidebar:var(--neutral-900);--sidebar-foreground:var(--neutral-100);--sidebar-primary:var(--red-500);--sidebar-primary-foreground:#FFFFFF;--sidebar-accent:var(--neutral-800);--sidebar-accent-foreground:#FFFFFF;--sidebar-border:var(--neutral-700);--sidebar-ring:var(--red-400);
+  --chart-1:var(--red-500);--chart-2:var(--neutral-300);--chart-3:#FF9F0A;--chart-4:#BF5AF2;--chart-5:#F43F5E;
+  /* ---- Alpha layers: the `foreground/N` and `background/N` utilities that build most of the UI ---- */
+  --fg-rgb:232,228,225;/* @kind other */--bg-rgb:11,10,10;/* @kind other */
+  --fg-a3:rgba(var(--fg-rgb),.03);--fg-a4:rgba(var(--fg-rgb),.04);--fg-a5:rgba(var(--fg-rgb),.05);--fg-a6:rgba(var(--fg-rgb),.06);--fg-a8:rgba(var(--fg-rgb),.08);--fg-a10:rgba(var(--fg-rgb),.10);--fg-a12:rgba(var(--fg-rgb),.12);--fg-a15:rgba(var(--fg-rgb),.15);--fg-a20:rgba(var(--fg-rgb),.20);--fg-a25:rgba(var(--fg-rgb),.25);--fg-a30:rgba(var(--fg-rgb),.30);--fg-a40:rgba(var(--fg-rgb),.40);--fg-a50:rgba(var(--fg-rgb),.50);--fg-a60:rgba(var(--fg-rgb),.60);--fg-a70:rgba(var(--fg-rgb),.70);--fg-a80:rgba(var(--fg-rgb),.80);--fg-a90:rgba(var(--fg-rgb),.90);
+  --bg-a35:rgba(var(--bg-rgb),.35);--bg-a40:rgba(var(--bg-rgb),.40);--bg-a60:rgba(var(--bg-rgb),.60);--bg-a70:rgba(var(--bg-rgb),.70);--bg-a80:rgba(var(--bg-rgb),.80);--bg-a90:rgba(var(--bg-rgb),.90);--bg-a95:rgba(var(--bg-rgb),.95);
+  --primary-a10:rgba(var(--red-rgb),.10);--primary-a15:rgba(var(--red-rgb),.15);--primary-a20:rgba(var(--red-rgb),.20);--primary-a30:rgba(var(--red-rgb),.30);--primary-a40:rgba(var(--red-rgb),.40);--primary-a50:rgba(var(--red-rgb),.50);
+  --destructive-a10:rgba(244,63,94,.10);--destructive-a15:rgba(244,63,94,.15);--destructive-a20:rgba(244,63,94,.20);--destructive-a30:rgba(244,63,94,.30);--destructive-a40:rgba(244,63,94,.40);
+  --warning-a15:rgba(255,159,10,.15);--warning-a20:rgba(255,159,10,.20);--success-a15:rgba(48,209,88,.15);--success-a20:rgba(48,209,88,.20);
+  /* ---- Component-level tokens carried over from globals.css ---- */
+  --nav-cta-bg:var(--red-500);
+  --nav-cta-fg:#FFFFFF;
+  --nav-cta-glow:rgba(var(--red-rgb),.5);
+  --nav-cta-text-shadow:0 1px 2px rgba(0,0,0,.2);
+  --nav-cta-hover-shadow:0 1px 2px rgba(0,0,0,.1),0 3px 5px var(--nav-cta-glow),inset 0 1px 0 rgba(255,255,255,.25);
+  --bento-glow-rgb:232,69,43;/* @kind other */
+  --card-highlight-shadow:inset 0 1px 0 rgba(255,255,255,.06);
+  --card-edge-shadow:0 1px 2px 0 rgba(255,255,255,.05);
+  --preview-ambient-glow:rgba(255,255,255,.04);
+  --preview-shell-shadow:0 1px 2px rgba(255,255,255,.04),0 24px 64px rgba(0,0,0,.45);
+  --canvas-control-surface:#FFFFFF;
+  --canvas-selection:#3B82F6;
+  --canvas-destructive:#EF4444;
+  /* ---- Brand gradients (canvas background presets; the last four are verbatim from lib/constants/gradient-colors.ts) ---- */
+  --gradient-ember:linear-gradient(145deg,#090A0C,#E8452B);/* @kind color */
+  --gradient-crimson-dusk:linear-gradient(135deg,rgb(237,33,58),rgb(147,41,30));/* @kind color */
+  --gradient-sunset:linear-gradient(135deg,rgb(255,81,47),rgb(221,36,118));/* @kind color */
+  --gradient-charcoal-red:linear-gradient(135deg,rgb(51,51,51),rgb(221,24,24));/* @kind color */
+  --gradient-graphite:linear-gradient(150deg,#18181B,#3F3F46);/* @kind color */
+  --gradient-fire:linear-gradient(135deg,rgb(248,54,0),rgb(249,212,35));/* @kind color */
+  /* ---- Browser-frame chrome (BrowserToolbar.tsx, literal values) ---- */
+  --frame-safari-dark:#3A3A3C;--frame-safari-light:#F6F6F6;--frame-chrome-tab-dark:#202124;--frame-chrome-tab-light:#DEE1E6;--frame-chrome-active-dark:#292A2D;--frame-chrome-active-light:#FFFFFF;--traffic-red:#FF5F57;--traffic-yellow:#FEBC2E;--traffic-green:#28C840;
+  color-scheme:dark;
+}
+.light{
+  --background:#FFFFFF;--foreground:#1E1B1A;--card:#F7F5F4;--card-foreground:#1E1B1A;--popover:#FFFFFF;--popover-foreground:#1E1B1A;
+  --primary:var(--red-500);--primary-foreground:#FFFFFF;--primary-hover:var(--red-600);--primary-active:var(--red-700);
+  --secondary:#F1EEEC;--secondary-foreground:#1E1B1A;--muted:#F5F3F2;--muted-foreground:#7A736F;--accent:#F1EEEC;--accent-foreground:#1E1B1A;
+  --destructive:#E11D48;--destructive-foreground:#FFFFFF;--success:#1F9D4A;--warning:#D97706;
+  --border:#E6E1DE;--input:#E6E1DE;--ring:var(--red-500);
+  --sidebar:#FFFFFF;--sidebar-foreground:#1E1B1A;--sidebar-accent:#F1EEEC;--sidebar-accent-foreground:#1E1B1A;--sidebar-border:#E6E1DE;
+  --fg-rgb:30,27,26;/* @kind other */--bg-rgb:255,255,255;/* @kind other */
+  --card-highlight-shadow:inset 0 1px 0 rgba(0,0,0,.06);--card-edge-shadow:0 1px 2px 0 rgba(0,0,0,.05);--preview-ambient-glow:rgba(0,0,0,.04);--preview-shell-shadow:0 1px 2px rgba(0,0,0,.04),0 24px 64px rgba(0,0,0,.2);
+  color-scheme:light;
+}

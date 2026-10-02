@@ -1,0 +1,27 @@
+/* Motion. Durations/easings are the literals used across the source (transition-colors 150ms, transition-all 200ms ease-in-out, FAQ/nav 300ms quint, hero mask reveal 750ms). Honour prefers-reduced-motion in components (the source disables animations under it). */
+:root{
+  --duration-instant:100ms;/* @kind other */
+  --duration-fast:150ms;/* @kind other */
+  --duration-base:200ms;/* @kind other */
+  --duration-slow:300ms;/* @kind other */
+  --duration-slower:400ms;/* @kind other */
+  --duration-enter:500ms;/* @kind other */
+  --duration-reveal:750ms;/* @kind other */
+  --ease-default:ease-in-out;/* @kind other */
+  --ease-out:ease-out;/* @kind other */
+  --ease-out-expo:cubic-bezier(0.16,1,0.3,1);/* @kind other */ /* menus, loading cards */
+  --ease-out-quint:cubic-bezier(0.23,1,0.32,1);/* @kind other */ /* FAQ rows, bento hover, nav morph */
+  --ease-mask:cubic-bezier(0.33,1,0.68,1);/* @kind other */ /* hero text mask reveal */
+  --ease-sheen:cubic-bezier(0.45,0,0.55,1);/* @kind other */ /* skeleton sheen */
+  --press-scale:.98;/* @kind other */
+  --press-scale-icon:.95;/* @kind other */
+  --press-scale-hero:.97;/* @kind other */
+  --press-scale-row:.99;/* @kind other */
+  --hover-scale:1.01;/* @kind other */
+  --hover-scale-thumb:1.1;/* @kind other */
+  --stagger-heading:75ms;/* @kind other */
+  --delay-description:420ms;/* @kind other */
+  --delay-cta:620ms;/* @kind other */
+  --tab-swap-duration:150ms;/* @kind other */
+  --tab-swap-offset:4px;/* @kind other */
+}

@@ -1,0 +1,31 @@
+/* Type tokens. Inter everywhere (UI and display), JetBrains Mono for code/shortcuts; the system stack only inside rendered browser-frame chrome. Sizes are the literal px values used in the source (text-[15px], text-[11px], 44px/50px display…), not a snapped scale. */
+:root{
+  --font-sans:"Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+  --font-display:"Inter","Inter Fallback",Arial,Helvetica,sans-serif;
+  --font-mono:"JetBrains Mono","Fira Code",ui-monospace,SFMono-Regular,Menlo,monospace;
+  /* Browser-frame chrome only. The source ships SF Pro Display OTFs for this; they are Apple-licensed and not redistributed here — -apple-system resolves to SF on Apple devices anyway. */
+  --font-system:-apple-system,BlinkMacSystemFont,system-ui,"Segoe UI",Roboto,sans-serif;
+  --font-serif:Georgia,serif;
+  /* UI sizes */
+  --text-2xs:10px;--text-xs:12px;--text-sm:14px;--text-base:16px;--text-lg:18px;--text-xl:20px;--text-2xl:24px;--text-3xl:30px;
+  --text-11:11px;--text-13:13px;--text-15:15px;--text-17:17px;--text-22:22px;--text-26:26px;
+  /* Display (size / line-height) — landing headings */
+  --display-sm:28px;--display-sm-lh:34px;/* @kind spacing */
+  --display-md:36px;--display-md-lh:42px;/* @kind spacing */
+  --display-lg:44px;--display-lg-lh:50px;/* @kind spacing */
+  --display-xl:56px;--display-xl-lh:64px;/* @kind spacing */
+  --display-hero-mobile:32px;--display-hero-mobile-lh:38px;/* @kind spacing */
+  /* Line heights */
+  --leading-none:1;/* @kind other */--leading-tight:1.25;/* @kind other */--leading-snug:1.375;/* @kind other */--leading-normal:1.5;/* @kind other */--leading-relaxed:1.625;/* @kind other */
+  /* Tracking — body sits at -0.01em globally (globals.css --tracking-normal) */
+  --tracking-display:-0.03em;/* @kind other */--tracking-tight:-0.02em;/* @kind other */--tracking-normal:-0.01em;/* @kind other */--tracking-wide:0.015em;/* @kind other */--tracking-wider:0.04em;/* @kind other */--tracking-widest:0.09em;/* @kind other */--tracking-label:0.08em;/* @kind other */
+  /* Weights */
+  --weight-regular:400;/* @kind other */--weight-medium:500;/* @kind other */--weight-semibold:600;/* @kind other */--weight-bold:700;/* @kind other */
+  /* Semantic text styles */
+  --text-body:var(--weight-regular) var(--text-sm)/var(--leading-normal) var(--font-sans);/* @kind font */
+  --text-label:var(--weight-medium) var(--text-sm)/1 var(--font-sans);/* @kind font */
+  --text-caption:var(--weight-regular) var(--text-xs)/var(--leading-normal) var(--font-sans);/* @kind font */
+  --text-section-title:var(--weight-semibold) var(--text-xs)/1 var(--font-sans);/* @kind font */
+  --text-display:var(--weight-semibold) var(--display-lg)/var(--display-lg-lh) var(--font-display);/* @kind font */
+  --text-code:var(--weight-regular) var(--text-13)/1.6 var(--font-mono);/* @kind font */
+}
