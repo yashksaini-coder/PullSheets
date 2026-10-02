@@ -12,7 +12,7 @@ Pullsheets turns a GitHub pull request into a share-ready image or short clip fo
 | Repo shape | Single Next.js 15 App Router app; `remotion/` colocated | Turborepo monorepo | Only justification for a package boundary is the card library's two renderers; a lint-enforced purity rule gives that boundary for free. Upgrade path is a folder move. |
 | Scope | Everything real: auth, GitHub import, image + video export, billing, social | Stubs | User decision. Tiered env (§2) keeps a fresh clone bootable. |
 | Database | Postgres + Drizzle, `docker-compose` locally | No DB · SQLite | Export history, settings, tokens and webhook idempotency need a store; Drizzle is SQL-first with no codegen. |
-| Auth | `better-auth` with GitHub provider, Drizzle adapter | Auth.js v5 (beta) | Stable, Drizzle-native; models "connect account for posting" separately from "log in with". Contained in `lib/auth/` + schema. |
+| Auth | `better-auth` with GitHub provider, Drizzle adapter | Auth.js v5 (beta) | Stable, Drizzle-native; models "connect account for posting" separately from "log in with". Contained in `lib/auth/` + schema. OAuth tokens at rest are encrypted by better-auth with XChaCha20-Poly1305 keyed from `BETTER_AUTH_SECRET` (§3); `TOKEN_ENCRYPTION_KEY` is reserved for phase-6 social tokens. |
 | Card library | 6 headless slot layouts + 7 token sets + 3 structural overrides | 42 bespoke components | The design doc states "same nine facts, same reading order; only visual grammar changes". Midnight/Modern/Minimal/Industrial differ only in tokens. Terminal, Editorial, Futuristic differ structurally. |
 | Image export | Free: client `html-to-image` ≤2× watermark. Pro: server Remotion `renderStill` | Client-only | Client-side export cannot be paywalled; `renderStill` reuses the video renderer and the same components. |
 | Video | Remotion. `VIDEO_RENDER_MODE=lambda` (prod) / `local` (dev, headless Chrome) | Container + queue | Lambda is the queue. No Redis/BullMQ until local-mode concurrency is a measured constraint. |
@@ -40,7 +40,9 @@ Rules:
 
 ## 3. Data model (Drizzle, Postgres)
 
-better-auth owns: `users` (extended with `plan`, `stripe_customer_id`, `stripe_subscription_id`, `plan_renews_at`), `sessions`, `accounts` (OAuth tokens — encrypted at rest with `TOKEN_ENCRYPTION_KEY`, AES-256-GCM), `verifications`.
+better-auth owns: `users` (extended with `plan`, `stripe_customer_id`, `stripe_subscription_id`, `plan_renews_at`), `sessions`, `accounts`, `verifications`.
+
+`accounts` OAuth tokens are encrypted at rest by better-auth's `encryptOAuthTokens` — **XChaCha20-Poly1305 with a key derived from `BETTER_AUTH_SECRET`**, not AES-GCM and not `TOKEN_ENCRYPTION_KEY`. Rotating `BETTER_AUTH_SECRET` therefore invalidates every stored GitHub token and forces a re-login. `TOKEN_ENCRYPTION_KEY` is reserved for the `social_connections` tokens in phase 6 and has no runtime consumer before then; it is validated at boot only so the key exists when phase 6 lands.
 
 Product tables:
 
