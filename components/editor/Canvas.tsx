@@ -9,13 +9,14 @@ import { useEditor } from './EditorProvider';
 import { CardScaler } from './CardScaler';
 import { BrowserFrame } from './frames/BrowserFrame';
 import { useImportPr } from './use-import-pr';
+import { VIDEO_PENDING_TOAST, VIDEO_TITLE } from './panels/ExportMenu';
 
 export function Canvas({ stageRef, rulers, grid, onOpenImport, onAnimate }: {
   stageRef: RefObject<HTMLDivElement | null>;
   rulers: boolean; grid: boolean;
   onOpenImport: () => void; onAnimate: () => void;
 }) {
-  const { d, facts, features, toast } = useEditor();
+  const { d, facts, toast } = useEditor();
   const { importUrl } = useImportPr();
   const canvasRef = useRef<HTMLDivElement>(null);
   const [box, setBox] = useState({ w: 760, h: 428 });
@@ -88,37 +89,35 @@ export function Canvas({ stageRef, rulers, grid, onOpenImport, onAnimate }: {
       <div ref={stageRef} className="ed-stage" style={{ width: box.w, height: box.h, background: bgCss(d.bg, d.customColor), padding: d.bgPad * k }}>
         {d.noise && <div className="noise" />}
         {grid && <div className="grid-overlay" />}
-        {facts ? (
-          <>
-            {d.caption && (
-              <div style={{ position: 'absolute', top: '5.5%', left: '4.5%', right: '4.5%', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16, color: '#fff', textShadow: '0 1px 4px rgba(0,0,0,.35)', pointerEvents: 'none' }}>
-                <span style={{ fontSize: Math.round(34 * k), fontWeight: 600, letterSpacing: '-0.03em', whiteSpace: 'nowrap' }}>{d.captionText}</span>
-                <span style={{ fontSize: Math.round(19 * k), fontWeight: 500, opacity: 0.85, whiteSpace: 'nowrap' }}>{d.captionSub}</span>
-              </div>
-            )}
-            {d.overlay && (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img src={`/assets/overlays/${d.overlay}-black.webp`} alt="" style={{ position: 'absolute', left: '-4%', bottom: '-10%', width: `${d.overlaySize}%`, filter: 'drop-shadow(0 20px 30px rgba(0,0,0,.35))', pointerEvents: 'none' }} />
-            )}
-            <div className="card-wrap" data-selected={selected || undefined} style={{ width: `${wrapW}%`, transform, containerType: 'inline-size' }} onClick={(e) => { e.stopPropagation(); setSelected(true); }}>
-              <div style={frameOuter}>
-                <div style={frameInner}>
-                  <BrowserFrame browser={d.mode === 'browser' ? d.browser : 'none'} dark={d.chromeDark} url={url}>
-                    <CardScaler nativeWidth={FRAME_WIDTH[d.cardFormat]}>
-                      <Card family={d.cardFamily} format={d.cardFormat} facts={shown} />
-                    </CardScaler>
-                  </BrowserFrame>
-                </div>
-              </div>
-              {isMac && <div className="mac-base" />}
+        {d.caption && (
+          <div style={{ position: 'absolute', top: '5.5%', left: '4.5%', right: '4.5%', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16, color: '#fff', textShadow: '0 1px 4px rgba(0,0,0,.35)', pointerEvents: 'none' }}>
+            <span style={{ fontSize: Math.round(34 * k), fontWeight: 600, letterSpacing: '-0.03em', whiteSpace: 'nowrap' }}>{d.captionText}</span>
+            <span style={{ fontSize: Math.round(19 * k), fontWeight: 500, opacity: 0.85, whiteSpace: 'nowrap' }}>{d.captionSub}</span>
+          </div>
+        )}
+        {d.overlay && (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img src={`/assets/overlays/${d.overlay}-black.webp`} alt="" style={{ position: 'absolute', left: '-4%', bottom: '-10%', width: `${d.overlaySize}%`, filter: 'drop-shadow(0 20px 30px rgba(0,0,0,.35))', pointerEvents: 'none' }} />
+        )}
+        <div className="card-wrap" data-selected={selected || undefined} style={{ width: `${wrapW}%`, transform, containerType: 'inline-size' }} onClick={(e) => { e.stopPropagation(); setSelected(true); }}>
+          <div style={frameOuter}>
+            <div style={frameInner}>
+              <BrowserFrame browser={d.mode === 'browser' ? d.browser : 'none'} dark={d.chromeDark} url={url}>
+                <CardScaler nativeWidth={FRAME_WIDTH[d.cardFormat]}>
+                  <Card family={d.cardFamily} format={d.cardFormat} facts={shown} />
+                </CardScaler>
+              </BrowserFrame>
             </div>
-          </>
-        ) : (
-          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 14, textAlign: 'center', color: '#fff', padding: 24, width: '100%', maxWidth: 420 }}>
+          </div>
+          {isMac && <div className="mac-base" />}
+        </div>
+        {/* No PR imported yet: the sample card keeps rendering behind this prompt, so the stage is never empty. */}
+        {!facts && (
+          <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 14, textAlign: 'center', color: '#fff', padding: 24, background: 'rgba(11,10,10,.4)', backdropFilter: 'blur(2px)' }}>
             <button type="button" onClick={onOpenImport} aria-label="Import a pull request" style={{ width: 96, height: 96, borderRadius: 24, border: '1px dashed rgba(255,255,255,.55)', background: 'rgba(11,10,10,.25)', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', backdropFilter: 'blur(6px)' }}><Plus size={44} strokeWidth={1.5} /></button>
             <div style={{ fontSize: 15, fontWeight: 500, textShadow: '0 1px 4px rgba(0,0,0,.35)' }}>Drag &amp; drop, click to browse, or paste a PR link</div>
             <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, color: 'rgba(255,255,255,.8)' }}><Kbd>⌘ V</Kbd><span>to paste</span></div>
-            <form className="url-pill" onSubmit={(e) => { e.preventDefault(); importUrl(prUrl).then((f) => { if (f) setPrUrl(''); }); }}>
+            <form className="url-pill" style={{ maxWidth: 420 }} onSubmit={(e) => { e.preventDefault(); importUrl(prUrl).then((f) => { if (f) setPrUrl(''); }); }}>
               <Link2 size={14} style={{ color: 'rgba(255,255,255,.7)', flexShrink: 0 }} />
               <input value={prUrl} onChange={(e) => setPrUrl(e.target.value)} placeholder="github.com/owner/repo/pull/482" aria-label="Pull request URL" />
               <button type="submit" className="round-go" aria-label="Import"><Link2 size={14} /></button>
@@ -148,7 +147,7 @@ export function Canvas({ stageRef, rulers, grid, onOpenImport, onAnimate }: {
             <div style={{ position: 'absolute', top: 0, bottom: 0, left: `${playhead * 100}%`, width: 1, background: 'var(--foreground)' }} />
           </div>
           <span className="mono muted" style={{ fontSize: 11 }}>{totalDur.toFixed(1)}s</span>
-          <Button size="sm" disabled={!features.video} title={features.video ? undefined : 'Video rendering lands in phase 4'} onClick={() => toast({ type: 'info', title: 'Export video from Save → MP4' })}><Video size={14} />Export Video</Button>
+          <Button size="sm" title={VIDEO_TITLE} onClick={() => toast(VIDEO_PENDING_TOAST)}><Video size={14} />Export Video</Button>
         </div>
       )}
 

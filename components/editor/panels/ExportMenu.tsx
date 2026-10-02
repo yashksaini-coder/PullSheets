@@ -5,13 +5,14 @@ import { toBlob, toJpeg, toPng } from 'html-to-image';
 import { Copy, Download } from 'lucide-react';
 import { Button, Slider, useClickOutside } from '@/components/ui';
 import { LinkedInIcon, XIcon } from '@/components/brand-icons';
-import { SAMPLE_FACTS } from '@/components/cards';
 import { ASPECTS, saveExport } from '@/lib/data';
-import { clipsDuration } from '@/lib/editor/design';
 import { useEditor } from '../EditorProvider';
 
 type Fmt = 'png' | 'jpg' | 'mp4' | 'gif';
 const FORMATS: Fmt[] = ['png', 'jpg', 'mp4', 'gif'];
+export const VIDEO_TITLE = 'Video rendering lands in phase 4';
+/** Shared by every video affordance: phase 1 has no renderer, so nothing is produced and nothing is recorded. */
+export const VIDEO_PENDING_TOAST = { type: 'info' as const, title: VIDEO_TITLE, description: 'Pick an entrance or camera move in Motion now; MP4/GIF export is wired in phase 4.' };
 
 export function ExportMenu({ stageRef, onNeedMotion }: { stageRef: RefObject<HTMLDivElement | null>; onNeedMotion: () => void }) {
   const { d, facts, features, toast } = useEditor();
@@ -27,21 +28,18 @@ export function ExportMenu({ stageRef, onNeedMotion }: { stageRef: RefObject<HTM
   const pixelRatio = () => (a.w / Math.max(1, stageRef.current?.clientWidth ?? a.w)) * exportScale;
 
   const doExport = async (fmt: Fmt = format) => {
-    const isVideo = fmt === 'mp4' || fmt === 'gif';
-    if (isVideo && !features.video) {
-      toast({ type: 'info', title: 'Video rendering lands in phase 4' });
-      return;
-    }
-    if (isVideo && !d.clips.length) {
-      toast({ type: 'info', title: 'Add a clip first', description: 'Pick an entrance or camera move in Motion.' });
+    // Phase 1 has no renderer, so a video export can only ever be a promise, never a file.
+    if (fmt === 'mp4' || fmt === 'gif') {
+      toast(VIDEO_PENDING_TOAST);
       onNeedMotion();
       setOpen(false);
       return;
     }
+    if (!facts) return; // Save is disabled without facts; the sample card is never exportable.
     setOpen(false);
-    const f = facts ?? SAMPLE_FACTS;
+    const f = facts;
     const name = `${f.repo.name}-pr${f.number}-${d.aspect}`;
-    if (!isVideo && stageRef.current) {
+    if (stageRef.current) {
       try {
         const ratio = pixelRatio();
         const url = fmt === 'jpg' ? await toJpeg(stageRef.current, { pixelRatio: ratio, quality: 0.95 }) : await toPng(stageRef.current, { pixelRatio: ratio });
@@ -54,19 +52,17 @@ export function ExportMenu({ stageRef, onNeedMotion }: { stageRef: RefObject<HTM
         return;
       }
     }
-    const dur = clipsDuration(d.clips);
     saveExport({
       id: Date.now(), title: f.title, repo: `${f.repo.owner}/${f.repo.name}`, number: f.number, status: f.state,
       platform: a.label, w: a.w * exportScale, h: a.h * exportScale, format: fmt.toUpperCase(), scale: exportScale,
-      bg: d.bg === 'custom' ? d.customColor : d.bg, kind: isVideo ? 'video' : 'image', dur: isVideo ? dur : 0,
-      when: 'Just now', ts: Date.now(),
+      bg: d.bg === 'custom' ? d.customColor : d.bg, kind: 'image', dur: 0, when: 'Just now', ts: Date.now(),
     });
     toast({ type: 'success', title: `Exported ${fmt.toUpperCase()} · ${a.w * exportScale}×${a.h * exportScale}`, description: 'Saved to Recent exports', actionLabel: 'Open', onAction: () => router.push('/account#exports') });
   };
 
   const copyImage = async () => {
     try {
-      if (!stageRef.current) return;
+      if (!stageRef.current || !facts) return;
       const blob = await toBlob(stageRef.current, { pixelRatio: pixelRatio() });
       if (blob && navigator.clipboard && 'ClipboardItem' in window) await navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]);
       toast({ type: 'success', title: 'Copied to clipboard', description: `${a.w * exportScale}×${a.h * exportScale} PNG` });
@@ -75,13 +71,15 @@ export function ExportMenu({ stageRef, onNeedMotion }: { stageRef: RefObject<HTM
     }
   };
 
+  const canExport = facts !== null;
+  const needsPr = canExport ? undefined : 'Import a pull request first';
   const socialTitle = features.social ? 'Posting lands in phase 5' : 'Set X_CLIENT_ID / LINKEDIN_CLIENT_ID in .env.local';
 
   return (
     <div className="ed-group" style={{ gap: 6 }}>
-      <Button variant="ghost" size="sm" onClick={copyImage}><Copy size={14} />Copy</Button>
+      <Button variant="ghost" size="sm" onClick={copyImage} disabled={!canExport} title={needsPr}><Copy size={14} />Copy</Button>
       <div ref={saveRef} style={{ position: 'relative' }}>
-        <Button size="sm" onClick={() => setOpen((o) => !o)} aria-expanded={open}><Download size={14} />Save</Button>
+        <Button size="sm" onClick={() => setOpen((o) => !o)} aria-expanded={open} disabled={!canExport} title={needsPr}><Download size={14} />Save</Button>
         {open && (
           <div className="popover" style={{ right: 0, width: 300, display: 'flex', flexDirection: 'column', gap: 12 }}>
             <div className="row-between">
@@ -91,9 +89,9 @@ export function ExportMenu({ stageRef, onNeedMotion }: { stageRef: RefObject<HTM
             {/* Inline segmented control: unlike <Segmented>, options here can be disabled per format. */}
             <div className="seg seg-sm" role="tablist">
               {FORMATS.map((f) => {
-                const off = (f === 'mp4' || f === 'gif') && !features.video;
+                const off = f === 'mp4' || f === 'gif'; // no renderer before phase 4, regardless of env
                 return (
-                  <button key={f} type="button" role="tab" aria-selected={format === f} disabled={off} title={off ? 'Video rendering lands in phase 4' : undefined} style={off ? { opacity: 0.45, cursor: 'not-allowed' } : undefined} onClick={() => setFormat(f)}>
+                  <button key={f} type="button" role="tab" aria-selected={format === f} disabled={off} title={off ? VIDEO_TITLE : undefined} style={off ? { opacity: 0.45, cursor: 'not-allowed' } : undefined} onClick={() => setFormat(f)}>
                     {f.toUpperCase()}
                   </button>
                 );
