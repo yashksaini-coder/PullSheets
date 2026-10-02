@@ -6,7 +6,7 @@ export interface RecentPr { owner: string; repo: string; number: number; title: 
 export async function listRecentPrs(token: string, login: string): Promise<RecentPr[]> {
   try {
     const gh = githubClient(token);
-    const r = await gh.rest.search.issuesAndPullRequests({ q: `is:pr author:${login} sort:updated-desc`, per_page: 12 });
+    const r = await gh.rest.search.issuesAndPullRequests({ q: `is:pr author:${login}`, sort: 'updated', order: 'desc', per_page: 12, advanced_search: 'true' });
     return r.data.items.map((it) => {
       const [, owner, repo] = /repos\/([^/]+)\/([^/]+)$/.exec(it.repository_url) ?? [];
       const state: PrState = it.pull_request?.merged_at ? 'merged' : it.state === 'closed' ? 'closed' : it.draft ? 'draft' : 'open';

@@ -24,9 +24,12 @@ export async function fetchPrFacts(ref: PrRef, opts: { token: string | null; for
   let rateRemaining: number | null = null;
   let etag: string | null = null;
   try {
-    const res = await gh.rest.pulls.get({ ...base, headers: row?.etag ? { 'if-none-match': row.etag } : {} });
+    // A forced refresh must hit GitHub for real: checks/reviews live on the head commit, not
+    // the pull resource, so a 304 on the pull alone would short-circuit them out of a refresh.
+    const res = await gh.rest.pulls.get({ ...base, headers: row?.etag && !opts.force ? { 'if-none-match': row.etag } : {} });
     pull = res.data as unknown as GhPull;
-    rateRemaining = Number(res.headers['x-ratelimit-remaining'] ?? NaN) || null;
+    const remainingHeader = res.headers['x-ratelimit-remaining'];
+    rateRemaining = remainingHeader == null ? null : Number(remainingHeader);
     etag = res.headers.etag ?? null;
   } catch (e) {
     if (e instanceof RequestError && e.status === 304 && row) {
@@ -35,19 +38,34 @@ export async function fetchPrFacts(ref: PrRef, opts: { token: string | null; for
     }
     throw mapGitHubError(e);
   }
+
+  let reviews: GhReview[];
+  let files: GhFile[];
+  let checks: GhCheckRun[];
   try {
-    const [reviews, files, checks] = await Promise.all([
+    [reviews, files, checks] = await Promise.all([
       gh.rest.pulls.listReviews({ ...base, per_page: 100 }).then((r) => r.data as unknown as GhReview[]),
       gh.rest.pulls.listFiles({ ...base, per_page: 100 }).then((r) => r.data as unknown as GhFile[]),
-      gh.rest.checks.listForRef({ owner: ref.owner, repo: ref.repo, ref: pull.head.sha, per_page: 100 }).then((r) => r.data.check_runs as unknown as GhCheckRun[]).catch(() => [] as GhCheckRun[]),
+      gh.rest.checks
+        .listForRef({ owner: ref.owner, repo: ref.repo, ref: pull.head.sha, per_page: 100 })
+        .then((r) => r.data.check_runs as unknown as GhCheckRun[])
+        .catch((e) => {
+          // Only a confirmed "no access to checks" result means no checks; anything else
+          // (rate limit, timeout, 5xx) must not be cached as an empty, all-clear check list.
+          if (e instanceof RequestError && (e.status === 403 || e.status === 404)) return [] as GhCheckRun[];
+          throw e;
+        }),
     ]);
-    const facts = toPrFacts({ pull, reviews, files, checkRuns: checks });
-    await db
-      .insert(schema.prCache)
-      .values({ repo: key(ref), number: ref.number, etag, state: facts.state, facts, fetchedAt: new Date() })
-      .onConflictDoUpdate({ target: [schema.prCache.repo, schema.prCache.number], set: { etag, state: facts.state, facts, fetchedAt: new Date() } });
-    return { facts, cached: false, rateRemaining };
   } catch (e) {
     throw mapGitHubError(e);
   }
+
+  // Mapper/DB failures are ours, not GitHub's — let them propagate so withRoute logs them
+  // and returns a real 500 instead of a misleading 502 github_error.
+  const facts = toPrFacts({ pull, reviews, files, checkRuns: checks });
+  await db
+    .insert(schema.prCache)
+    .values({ repo: key(ref), number: ref.number, etag, state: facts.state, facts, fetchedAt: new Date() })
+    .onConflictDoUpdate({ target: [schema.prCache.repo, schema.prCache.number], set: { etag, state: facts.state, facts, fetchedAt: new Date() } });
+  return { facts, cached: false, rateRemaining };
 }

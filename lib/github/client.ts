@@ -10,7 +10,7 @@ export function mapGitHubError(e: unknown): AppError {
   if (e instanceof RequestError) {
     const remaining = e.response?.headers?.['x-ratelimit-remaining'];
     const reset = e.response?.headers?.['x-ratelimit-reset'];
-    if ((e.status === 403 || e.status === 429) && (remaining === '0' || /rate limit/i.test(e.message))) {
+    if (e.status === 429 || (e.status === 403 && (remaining === '0' || /rate limit/i.test(e.message)))) {
       return new RateLimited(reset ? new Date(Number(reset) * 1000).toISOString() : new Date(Date.now() + 60_000).toISOString());
     }
     if (e.status === 404) return new NotFound('pr_not_found', 'Pull request not found, or it is private and your GitHub login has no access');

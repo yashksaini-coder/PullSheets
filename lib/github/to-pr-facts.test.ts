@@ -36,6 +36,17 @@ describe('toPrFacts', () => {
   it('sorts files by churn and keeps the top 5', () => {
     expect(facts.files.map((x) => x.path)).toEqual(['src/review/HunkList.tsx', 'src/review/useVirtualHunks.ts', 'src/review/DiffPane.tsx', 'README.md']);
   });
+  it('drops files beyond the top 5 when there are more than 5', () => {
+    const sixFiles: GhFile[] = [
+      ...f.files,
+      { filename: 'src/review/extra-a.ts', additions: 200, deletions: 0 }, // highest churn — must sort to the front
+      { filename: 'src/review/extra-b.ts', additions: 1, deletions: 0 }, // lowest churn — must be the one dropped
+    ];
+    const result = toPrFacts({ ...f, files: sixFiles, snapshotAt: snap });
+    expect(result.files).toHaveLength(5);
+    expect(result.files[0].path).toBe('src/review/extra-a.ts');
+    expect(result.files.map((x) => x.path)).not.toContain('src/review/extra-b.ts');
+  });
   it('state: open with one approval of two is still open', () => {
     expect(facts.state).toBe('open');
   });
@@ -48,6 +59,22 @@ describe('toPrFacts', () => {
     expect(mk({}, f.reviews, [{ ...f.checkRuns[0], conclusion: 'failure' }])).toBe('checks-failed');
     expect(mk({}, [{ ...f.reviews[1], state: 'CHANGES_REQUESTED' }])).toBe('changes');
     expect(mk({ requested_reviewers: [] }, f.reviews, [f.checkRuns[0]])).toBe('approved');
+  });
+  it('state precedence: overlapping conditions resolve to the higher-priority rung', () => {
+    const mk = (p: Partial<GhPull>, reviews = f.reviews, checks = f.checkRuns) => toPrFacts({ pull: { ...f.pull, ...p }, reviews, files: f.files, checkRuns: checks, snapshotAt: snap }).state;
+    const failingChecks: GhCheckRun[] = [{ ...f.checkRuns[0], conclusion: 'failure' }];
+    // draft + conflict → draft wins
+    expect(mk({ draft: true, mergeable_state: 'dirty' })).toBe('draft');
+    // conflict + a failing check → conflict wins
+    expect(mk({ mergeable_state: 'dirty' }, f.reviews, failingChecks)).toBe('conflict');
+    // a failing check + changes requested → checks-failed wins
+    expect(mk({}, [{ ...f.reviews[1], state: 'CHANGES_REQUESTED' }], failingChecks)).toBe('checks-failed');
+    // changes requested from one reviewer + another reviewer's approval → changes wins
+    const mixedReviews: GhReview[] = [
+      { user: { login: 'bchen', name: 'Bo Chen', avatar_url: null, type: 'User' }, state: 'APPROVED', submitted_at: '2026-09-15T13:10:00Z' },
+      { user: { login: 'ashah', name: 'Aditi Shah', avatar_url: null, type: 'User' }, state: 'CHANGES_REQUESTED', submitted_at: '2026-09-15T13:30:00Z' },
+    ];
+    expect(mk({}, mixedReviews)).toBe('changes');
   });
   it('stamps snapshotAt', () => {
     expect(facts.snapshotAt).toBe('2026-09-15T14:32:00.000Z');

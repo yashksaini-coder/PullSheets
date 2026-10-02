@@ -24,4 +24,20 @@ describe('mapGitHubError', () => {
     expect(e.status).toBe(502);
     expect(e.message).not.toContain('boom');
   });
+  it('401 → github_token_invalid 403', () => {
+    const e = mapGitHubError(mk(401));
+    expect([e.status, e.code]).toEqual([403, 'github_token_invalid']);
+  });
+  it('bare 429 with no headers → 429 with resetAt ~60s out', () => {
+    const before = Date.now();
+    const e = mapGitHubError(mk(429));
+    expect(e.status).toBe(429);
+    const resetAt = new Date(e.details?.resetAt as string).getTime();
+    expect(resetAt).toBeGreaterThanOrEqual(before + 59_000);
+    expect(resetAt).toBeLessThanOrEqual(before + 61_000);
+  });
+  it('403 with "rate limit" message and no remaining header → 429', () => {
+    const e = mapGitHubError(mk(403, {}, 'You have exceeded a secondary rate limit'));
+    expect(e.status).toBe(429);
+  });
 });
