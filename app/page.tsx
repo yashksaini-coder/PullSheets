@@ -126,7 +126,7 @@ export default function LandingPage() {
                     </div>
                   </div>
                   <div className="dot-grid" style={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 28, minWidth: 0 }}>
-                    <div style={{ position: 'relative', width: '100%', aspectRatio: '16 / 9', borderRadius: 10, overflow: 'hidden', background: 'var(--gradient-ember)', boxShadow: '0 0 0 1px var(--fg-a10),0 24px 48px rgba(0,0,0,.35)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20 }}>
+                    <div style={{ position: 'relative', width: '100%', minHeight: 320, borderRadius: 10, overflow: 'hidden', background: 'var(--gradient-ember)', boxShadow: '0 0 0 1px var(--fg-a10),0 24px 48px rgba(0,0,0,.35)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20 }}>
                       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 14, width: '100%', maxWidth: 440 }}>
                         <CardScaler nativeWidth={420}>
                           <Card family="midnight" format="standard" facts={SAMPLE_FACTS} />

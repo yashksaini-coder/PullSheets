@@ -52,7 +52,7 @@ be run after `docker compose up -d` so the schema exists before the app boots.
 
 ## Scripts
 
-`dev` `build` `start` · `typecheck` `lint` `format` `test` · `db:generate` `db:migrate` `db:push` `db:studio`
+`dev` `build` `start` · `typecheck` `lint` `format` `format:check` `test` `test:watch` · `db:generate` `db:migrate` `db:push` `db:studio`
 
 ## Layout
 
