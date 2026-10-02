@@ -1,0 +1,7 @@
+.next
+node_modules
+design-reference
+drizzle
+pnpm-lock.yaml
+public
+.superpowers

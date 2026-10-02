@@ -8,3 +8,7 @@ out
 .remember
 .data
 .env
+.data/
+coverage/
+.vercel
+.superpowers/
