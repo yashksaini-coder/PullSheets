@@ -9,7 +9,7 @@ import { useEditor } from './EditorProvider';
 import { CardScaler } from './CardScaler';
 import { BrowserFrame } from './frames/BrowserFrame';
 import { useImportPr } from './use-import-pr';
-import { VIDEO_PENDING_TOAST, VIDEO_TITLE } from './panels/ExportMenu';
+import { VIDEO_PENDING_TOAST, VIDEO_TITLE } from './video-pending';
 
 export function Canvas({ stageRef, rulers, grid, onOpenImport, onAnimate }: {
   stageRef: RefObject<HTMLDivElement | null>;

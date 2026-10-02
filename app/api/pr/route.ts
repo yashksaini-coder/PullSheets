@@ -6,6 +6,8 @@ import { BadRequest, withRoute } from '@/lib/errors';
 import { fetchPrFacts } from '@/lib/github/fetch-pr';
 import { parsePrUrl } from '@/lib/github/parse-url';
 
+const NAME = /^[\w.-]+$/; // same grammar as parsePrUrl
+
 export const GET = withRoute(async (req) => {
   const u = new URL(req.url);
   const ref = u.searchParams.get('url')
@@ -13,7 +15,9 @@ export const GET = withRoute(async (req) => {
     : u.searchParams.get('owner') && u.searchParams.get('repo') && u.searchParams.get('number')
       ? { owner: u.searchParams.get('owner')!, repo: u.searchParams.get('repo')!, number: Number(u.searchParams.get('number')) }
       : null;
-  if (!ref || !Number.isInteger(ref.number) || ref.number <= 0) throw new BadRequest('Use github.com/owner/repo/pull/123');
+  if (!ref || !Number.isInteger(ref.number) || ref.number <= 0 || !NAME.test(ref.owner) || !NAME.test(ref.repo)) {
+    throw new BadRequest('Use github.com/owner/repo/pull/123');
+  }
 
   const session = await getSession();
   const token = (session ? await getGitHubToken(session.user.id) : null) ?? env.GITHUB_PUBLIC_TOKEN ?? null;

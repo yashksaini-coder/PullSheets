@@ -7,7 +7,7 @@ import type { RecentPr } from '@/lib/github/recent';
 export function RecentPrs() {
   const [state, setState] = useState<{ status: 'loading' } | { status: 'error'; message: string } | { status: 'ok'; items: RecentPr[] }>({ status: 'loading' });
   useEffect(() => {
-    fetch('/api/pr/recent').then(async (r) => {
+    fetch('/api/pr/recent', { cache: 'no-store' }).then(async (r) => {
       if (!r.ok) { const b = await r.json().catch(() => ({})); setState({ status: 'error', message: b.error ?? `HTTP ${r.status}` }); return; }
       setState({ status: 'ok', items: await r.json() });
     }).catch(() => setState({ status: 'error', message: 'Network error' }));

@@ -7,12 +7,10 @@ import { Button, Slider, useClickOutside } from '@/components/ui';
 import { LinkedInIcon, XIcon } from '@/components/brand-icons';
 import { ASPECTS, saveExport } from '@/lib/data';
 import { useEditor } from '../EditorProvider';
+import { VIDEO_PENDING_TOAST, VIDEO_TITLE } from '../video-pending';
 
 type Fmt = 'png' | 'jpg' | 'mp4' | 'gif';
 const FORMATS: Fmt[] = ['png', 'jpg', 'mp4', 'gif'];
-export const VIDEO_TITLE = 'Video rendering lands in phase 4';
-/** Shared by every video affordance: phase 1 has no renderer, so nothing is produced and nothing is recorded. */
-export const VIDEO_PENDING_TOAST = { type: 'info' as const, title: VIDEO_TITLE, description: 'Pick an entrance or camera move in Motion now; MP4/GIF export is wired in phase 4.' };
 
 export function ExportMenu({ stageRef, onNeedMotion }: { stageRef: RefObject<HTMLDivElement | null>; onNeedMotion: () => void }) {
   const { d, facts, features, toast } = useEditor();
