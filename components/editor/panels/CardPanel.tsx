@@ -37,7 +37,7 @@ export function CardPanel() {
         <Segmented size="sm" value={d.cardFamily} onChange={(f: CardFamily) => update({ cardFamily: f })} options={AVAILABLE_FAMILIES.map((f) => ({ id: f, label: title(f) }))} />
         <label className="label-sm" style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
           Format
-          <select className="select" value={d.cardFormat} onChange={(e) => update({ cardFormat: e.target.value as CardFormat })}>
+          <select className="select" value={resolveCard(d.cardFamily, d.cardFormat) ? d.cardFormat : 'standard'} onChange={(e) => update({ cardFormat: e.target.value as CardFormat })}>
             {CARD_FORMATS.map((f) => {
               // Unregistered layouts would render Card's pc-missing placeholder and be exportable.
               const off = resolveCard(d.cardFamily, f) === null;

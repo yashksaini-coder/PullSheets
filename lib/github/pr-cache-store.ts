@@ -2,15 +2,8 @@ import { and, eq } from 'drizzle-orm';
 import type { PrFacts } from '@/components/cards/model';
 import { db, schema } from '@/lib/db';
 
-export interface PrCacheRow {
-  repo: string;
-  number: number;
-  etag: string | null;
-  state: string;
-  facts: PrFacts;
-  isPrivate: boolean;
-  fetchedAt: Date;
-}
+/** `pr_cache` row with `facts` typed; drizzle infers jsonb as `unknown`. */
+export type PrCacheRow = Omit<typeof schema.prCache.$inferSelect, 'facts'> & { facts: PrFacts };
 
 /** The three `pr_cache` operations `fetchPrFacts` needs. Injectable so the cache logic is testable without Postgres. */
 export interface PrCacheStore {
