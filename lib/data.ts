@@ -83,17 +83,6 @@ export interface ExportItem {
   ts: number;
 }
 
-export const DEMO_EXPORTS: ExportItem[] = [
-  { id: 1, title: 'Add PR link import and share-card renderer', repo: 'yashksaini-coder/PullSheets', number: 12, status: 'merged', platform: 'X post', w: 2400, h: 1350, format: 'PNG', scale: 2, bg: 'ember', kind: 'image', dur: 0, when: '2 hours ago', ts: 8 },
-  { id: 2, title: 'Export contribution graph as WebP', repo: 'yashksaini-coder/git-graph', number: 48, status: 'open', platform: 'LinkedIn', w: 2400, h: 1254, format: 'PNG', scale: 2, bg: 'graphite', kind: 'image', dur: 0, when: 'yesterday', ts: 7 },
-  { id: 3, title: 'Realtime issue feed via SSE', repo: 'yashksaini-coder/gitwatch-v2', number: 7, status: 'draft', platform: 'Story', w: 1080, h: 1920, format: 'MP4', scale: 1, bg: 'crimson', kind: 'video', dur: 4.2, when: '2 days ago', ts: 6 },
-  { id: 4, title: 'QUIC transport: retry on handshake timeout', repo: 'yashksaini-coder/py-libp2p', number: 612, status: 'merged', platform: 'Instagram square', w: 2160, h: 2160, format: 'JPG', scale: 2, bg: 'sunset', kind: 'image', dur: 0, when: '3 days ago', ts: 5 },
-  { id: 5, title: 'Editor: 3D layout presets and fine-tune sliders', repo: 'yashksaini-coder/PullSheets', number: 9, status: 'merged', platform: 'X post', w: 3600, h: 2025, format: 'PNG', scale: 3, bg: 'distortion', kind: 'image', dur: 0, when: 'last week', ts: 4 },
-  { id: 6, title: 'Self-healing scraper retries', repo: 'yashksaini-coder/opportunity-radar', number: 23, status: 'merged', platform: 'LinkedIn', w: 1200, h: 627, format: 'GIF', scale: 1, bg: 'mono', kind: 'video', dur: 2.7, when: 'last week', ts: 3 },
-  { id: 7, title: 'Trait browser: jump to impls', repo: 'yashksaini-coder/Rustlens', number: 31, status: 'closed', platform: 'Instagram portrait', w: 2160, h: 2700, format: 'JPG', scale: 2, bg: 'peach', kind: 'image', dur: 0, when: '2 weeks ago', ts: 2 },
-  { id: 8, title: 'Landing page and pricing', repo: 'yashksaini-coder/PullSheets', number: 5, status: 'merged', platform: 'X post', w: 2400, h: 1350, format: 'PNG', scale: 2, bg: 'fire', kind: 'image', dur: 0, when: '3 weeks ago', ts: 1 },
-];
-
 export const EXPORTS_KEY = 'pullsheets.exports';
 
 export function loadExports(): ExportItem[] {

@@ -1,7 +1,7 @@
 'use client';
 import { Moon, Sun } from 'lucide-react';
 import { Input, Section, Segmented, Slider, Switch, Tile } from '@/components/ui';
-import { AVAILABLE_FAMILIES, CARD_FORMATS, type CardFamily, type CardFormat } from '@/components/cards';
+import { AVAILABLE_FAMILIES, CARD_FORMATS, resolveCard, type CardFamily, type CardFormat } from '@/components/cards';
 import { SHADOWS, type ShadowKey } from '@/lib/data';
 import { useEditor } from '../EditorProvider';
 
@@ -38,7 +38,11 @@ export function CardPanel() {
         <label className="label-sm" style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
           Format
           <select className="select" value={d.cardFormat} onChange={(e) => update({ cardFormat: e.target.value as CardFormat })}>
-            {CARD_FORMATS.map((f) => <option key={f} value={f}>{title(f)}</option>)}
+            {CARD_FORMATS.map((f) => {
+              // Unregistered layouts would render Card's pc-missing placeholder and be exportable.
+              const off = resolveCard(d.cardFamily, f) === null;
+              return <option key={f} value={f} disabled={off} title={off ? 'Lands in phase 2' : undefined}>{title(f)}</option>;
+            })}
           </select>
         </label>
         <Slider label="Radius" value={d.radius} min={0} max={40} onChange={(v) => update({ radius: v })} display={`${d.radius}px`} />

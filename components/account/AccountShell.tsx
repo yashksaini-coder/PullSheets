@@ -11,7 +11,7 @@ import { GitHubIcon, LinkedInIcon, XIcon } from '@/components/brand-icons';
 import { SignInGitHub } from '@/components/auth/SignInGitHub';
 import { SignOutButton } from '@/components/auth/SignOutButton';
 import { RecentPrs } from '@/components/account/RecentPrs';
-import { BACKGROUNDS, DEMO_EXPORTS, EXPORTS_KEY, bgCss, loadExports, type ExportItem } from '@/lib/data';
+import { BACKGROUNDS, EXPORTS_KEY, bgCss, loadExports, type ExportItem } from '@/lib/data';
 import type { Features } from '@/lib/env';
 
 type PageId = 'overview' | 'exports' | 'export-defaults' | 'editor-defaults' | 'branding' | 'api' | 'profile' | 'github' | 'notifications' | 'billing' | 'danger';
@@ -97,7 +97,7 @@ export function AccountShell({ user, github, features }: { user: AccountUser; gi
     history.replaceState(null, '', `#${id}`);
   };
 
-  const all = useMemo(() => [...local.map((x) => ({ ...x, ts: 1000 + x.ts })), ...DEMO_EXPORTS].filter((x) => !removed.includes(x.id)), [local, removed]);
+  const all = useMemo(() => local.filter((x) => !removed.includes(x.id)), [local, removed]);
 
   const removeExport = useCallback((x: ExportItem) => {
     setRemoved((r) => [...r, x.id]);
@@ -181,6 +181,7 @@ function Overview({ all, go, user }: Ctx & { user: AccountUser }) {
   const greet = hour < 12 ? 'Good morning' : hour < 18 ? 'Good afternoon' : 'Good evening';
   const firstName = user.name.split(/\s+/)[0] || user.name;
   const [prRefresh, setPrRefresh] = useState(0);
+  const repos = new Set(all.map((x) => x.repo)).size;
   const flowTile = { width: 52, height: 52, borderRadius: 14, background: 'var(--fg-a6)', boxShadow: '0 0 0 1px var(--fg-a10)', display: 'inline-flex', alignItems: 'center', justifyContent: 'center' } as const;
   return (
     <>
@@ -198,7 +199,7 @@ function Overview({ all, go, user }: Ctx & { user: AccountUser }) {
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(180px,1fr))', gap: 12 }}>
         {[
           { l: 'Exports', v: String(all.length), s: `${all.filter((x) => x.kind === 'video').length} clips · ${all.filter((x) => x.kind === 'image').length} images` },
-          { l: 'Pull requests shared', v: '31', s: 'across 9 repositories' },
+          { l: 'Pull requests shared', v: String(new Set(all.map((x) => `${x.repo}#${x.number}`)).size), s: `across ${repos} ${repos === 1 ? 'repository' : 'repositories'}` },
           { l: 'Plan', v: user.plan === 'pro' ? 'Pro' : 'Free', s: user.plan === 'pro' ? 'Unlimited exports' : '20 exports a month' },
         ].map((c) => (
           <div key={c.l} className="card" style={{ padding: '16px 20px' }}>

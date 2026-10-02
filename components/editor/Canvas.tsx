@@ -2,7 +2,7 @@
 import { useEffect, useRef, useState, type CSSProperties, type RefObject } from 'react';
 import { Clapperboard, Link2, Pause, Play, Plus, Video } from 'lucide-react';
 import { Button, Kbd } from '@/components/ui';
-import { Card, FRAME_WIDTH, SAMPLE_FACTS } from '@/components/cards';
+import { Card, FRAME_WIDTH, SAMPLE_FACTS, resolveCard } from '@/components/cards';
 import { ASPECTS, CLIPS, SHADOWS, bgCss } from '@/lib/data';
 import { clipsDuration } from '@/lib/editor/design';
 import { useEditor } from './EditorProvider';
@@ -81,6 +81,9 @@ export function Canvas({ stageRef, rulers, grid, onOpenImport, onAnimate }: {
       : { borderRadius: d.radius, boxShadow: SHADOWS[d.shadow] };
   const frameInner: CSSProperties = { overflow: 'hidden', borderRadius: isIphone ? '6.5cqw' : isMac ? '.8cqw' : d.radius };
   const shown = facts ?? SAMPLE_FACTS;
+  // A design restored from a URL may name a format this family has no layout for; render the one
+  // format that always exists rather than the pc-missing placeholder (and without mutating state).
+  const format = resolveCard(d.cardFamily, d.cardFormat) ? d.cardFormat : 'standard';
   const url = `github.com/${shown.repo.owner}/${shown.repo.name}/pull/${shown.number}`;
 
   return (
@@ -103,8 +106,8 @@ export function Canvas({ stageRef, rulers, grid, onOpenImport, onAnimate }: {
           <div style={frameOuter}>
             <div style={frameInner}>
               <BrowserFrame browser={d.mode === 'browser' ? d.browser : 'none'} dark={d.chromeDark} url={url}>
-                <CardScaler nativeWidth={FRAME_WIDTH[d.cardFormat]}>
-                  <Card family={d.cardFamily} format={d.cardFormat} facts={shown} />
+                <CardScaler nativeWidth={FRAME_WIDTH[format]}>
+                  <Card family={d.cardFamily} format={format} facts={shown} />
                 </CardScaler>
               </BrowserFrame>
             </div>

@@ -64,6 +64,15 @@ describe('<Editor />', () => {
     expect(save(getByText).disabled).toBe(false);
   });
 
+  it('offers no unregistered card format: compact is disabled until phase 2', () => {
+    const { getByText } = render(
+      <Editor user={user} features={features} initialDesign={DEFAULT_DESIGN} initialFacts={SAMPLE_FACTS} />,
+    );
+    const compact = getByText('Compact') as HTMLOptionElement;
+    expect(compact.disabled).toBe(true);
+    expect(compact.title).toBe('Lands in phase 2');
+  });
+
   it('undoes a design change on ctrl/cmd+Z', () => {
     const { getByText } = render(
       <Editor user={user} features={features} initialDesign={DEFAULT_DESIGN} initialFacts={SAMPLE_FACTS} />,
