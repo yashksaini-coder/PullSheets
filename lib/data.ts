@@ -1,29 +1,4 @@
-export type PrStatus = 'open' | 'merged' | 'draft' | 'closed';
-
-export interface PullRequest {
-  repo: string;
-  number: number;
-  title: string;
-  status: PrStatus;
-  author: string;
-  base: string;
-  branch: string;
-  when: string;
-  commits: number;
-  body: string;
-  additions: number;
-  deletions: number;
-  files: number;
-  checks: string;
-}
-
-// Demo data — replace with GitHub API results (GET /repos/{owner}/{repo}/pulls/{n}).
-export const RECENT_PRS: PullRequest[] = [
-  { repo: 'yashksaini-coder/PullSheets', number: 12, title: 'Add PR link import and share-card renderer', status: 'merged', author: 'yashksaini-coder', base: 'main', branch: 'feat/pr-import', when: '2 hours ago', commits: 9, body: 'Paste a GitHub pull-request URL and Pullsheets fetches the metadata, renders it in a browser frame and exports a share-ready PNG. Adds the Import section, recent-PR picker and platform presets.', additions: 1842, deletions: 236, files: 24, checks: '14 / 14' },
-  { repo: 'yashksaini-coder/git-graph', number: 48, title: 'Export contribution graph as WebP', status: 'open', author: 'yashksaini-coder', base: 'master', branch: 'feat/webp-export', when: 'yesterday', commits: 4, body: 'Adds a WebP encoder path next to PNG, with a quality slider and a size comparison in the export dialog.', additions: 412, deletions: 38, files: 9, checks: '6 / 6' },
-  { repo: 'yashksaini-coder/gitwatch-v2', number: 7, title: 'Realtime issue feed via SSE', status: 'draft', author: 'yashksaini-coder', base: 'main', branch: 'feat/sse-feed', when: '2 days ago', commits: 6, body: 'Replaces polling with a server-sent events stream for new issues and comments. Reconnects with exponential backoff.', additions: 688, deletions: 120, files: 12, checks: '3 / 5' },
-  { repo: 'yashksaini-coder/Rustlens', number: 31, title: 'Trait browser: jump to impls', status: 'closed', author: 'yashksaini-coder', base: 'main', branch: 'feat/impl-index', when: 'last week', commits: 3, body: 'Adds an impl index so the trait view can jump to every implementation in the workspace.', additions: 301, deletions: 77, files: 7, checks: '8 / 8' },
-];
+import type { PrState } from '@/components/cards/model';
 
 export const BACKGROUNDS: { key: string; label: string; css: string; kind: 'gradient' | 'image' }[] = [
   { key: 'ember', label: 'Ember', css: 'var(--gradient-ember)', kind: 'gradient' },
@@ -95,7 +70,7 @@ export interface ExportItem {
   title: string;
   repo: string;
   number: number;
-  status: PrStatus;
+  status: PrState;
   platform: string;
   w: number;
   h: number;
@@ -133,9 +108,4 @@ export function loadExports(): ExportItem[] {
 export function saveExport(item: ExportItem) {
   const list = loadExports();
   localStorage.setItem(EXPORTS_KEY, JSON.stringify([item, ...list].slice(0, 40)));
-}
-
-export function parsePrUrl(u: string): { repo: string; number: number } | null {
-  const m = /github\.com\/([^/\s]+)\/([^/\s]+)\/pull\/(\d+)/i.exec(u || '');
-  return m ? { repo: `${m[1]}/${m[2]}`, number: Number(m[3]) } : null;
 }

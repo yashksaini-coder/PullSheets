@@ -11,7 +11,7 @@ import {
   type RefObject,
 } from 'react';
 import { ChevronDown, X } from 'lucide-react';
-import type { PrStatus } from '@/lib/data';
+import type { PrState } from '@/components/cards/model';
 
 /* ---------- Brand ---------- */
 
@@ -130,14 +130,18 @@ export function Kbd({ children }: { children: ReactNode }) {
 
 /* ---------- Display ---------- */
 
-const STATUS: Record<PrStatus, { label: string; color: string }> = {
+const STATUS: Record<PrState, { label: string; color: string }> = {
   open: { label: 'Open', color: '#1F9D4A' },
-  merged: { label: 'Merged', color: '#8250DF' },
-  draft: { label: 'Draft', color: '#6E7781' },
-  closed: { label: 'Closed', color: '#CF222E' },
+  draft: { label: 'Draft', color: '#6B6560' },
+  approved: { label: 'Approved', color: '#1F9D4A' },
+  changes: { label: 'Changes', color: '#B7791F' },
+  'checks-failed': { label: 'Checks failed', color: '#C53030' },
+  conflict: { label: 'Conflict', color: '#B7791F' },
+  merged: { label: 'Merged', color: '#7C3AED' },
+  closed: { label: 'Closed', color: '#C53030' },
 };
 
-export function StatusPill({ status }: { status: PrStatus }) {
+export function StatusPill({ status }: { status: PrState }) {
   const s = STATUS[status];
   return (
     <span className="pill" style={{ background: s.color }}>
