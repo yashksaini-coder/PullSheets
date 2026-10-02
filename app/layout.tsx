@@ -9,6 +9,7 @@ import '@/styles/tokens/shadows.css';
 import '@/styles/tokens/motion.css';
 import '@/styles/tokens/base.css';
 import './globals.css';
+import '@/components/cards/cards.css';
 
 export const metadata: Metadata = {
   title: 'Pullsheets — Pull requests, ready to post',

@@ -1,0 +1,10 @@
+.pc-midnight {
+  --pc-bg: #161826; --pc-fg: #e9e9ed; --pc-muted: rgba(233,233,237,.55); --pc-faint: rgba(233,233,237,.45);
+  --pc-line: rgba(255,255,255,.09); --pc-accent: #9184d9; --pc-track: #3f424d;
+  --pc-add: oklch(.75 .1 155); --pc-del: oklch(.72 .12 25); --pc-wait: oklch(.8 .12 80); --pc-fail: oklch(.7 .18 25);
+  --pc-radius: 10px; --pc-pad: 16px;
+  --pc-font: 'Inter', system-ui, sans-serif; --pc-mono: 'JetBrains Mono', ui-monospace, Menlo, monospace;
+  --pc-title-weight: 500;
+  background: var(--pc-bg); color: var(--pc-fg); font-family: var(--pc-font);
+  border: 1px solid var(--pc-line); border-radius: var(--pc-radius); box-shadow: 0 0 0 1px rgba(0,0,0,.4), 0 16px 40px rgba(0,0,0,.45);
+}
