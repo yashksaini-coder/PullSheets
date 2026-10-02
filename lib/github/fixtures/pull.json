@@ -5,7 +5,7 @@
     "state": "open", "draft": false, "merged": false, "merge_commit_sha": null, "mergeable_state": "clean",
     "user": { "login": "mkato", "name": "Mira Kato", "avatar_url": "https://avatars.githubusercontent.com/u/1", "type": "User" },
     "head": { "ref": "feat/lazy-hunks", "sha": "abc123" },
-    "base": { "ref": "main", "repo": { "name": "review-pane", "owner": { "login": "acme" } } },
+    "base": { "ref": "main", "repo": { "name": "review-pane", "owner": { "login": "acme" }, "private": false } },
     "additions": 183, "deletions": 42, "changed_files": 12, "commits": 9,
     "labels": [{ "name": "enhancement" }, { "name": "review-pane" }],
     "requested_reviewers": [{ "login": "jthale", "name": "Jonas Thäle", "avatar_url": null, "type": "User" }],

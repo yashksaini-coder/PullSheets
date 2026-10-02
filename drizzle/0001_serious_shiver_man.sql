@@ -1,0 +1,2 @@
+ALTER TABLE "pr_cache" ADD COLUMN "is_private" boolean DEFAULT false NOT NULL;--> statement-breakpoint
+CREATE INDEX "accounts_provider_account_idx" ON "accounts" USING btree ("provider_id","account_id");

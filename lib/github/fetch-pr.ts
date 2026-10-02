@@ -1,8 +1,7 @@
-import { and, eq } from 'drizzle-orm';
 import { RequestError } from '@octokit/request-error';
 import type { PrFacts } from '@/components/cards/model';
-import { db, schema } from '@/lib/db';
 import { githubClient, mapGitHubError } from './client';
+import { dbPrCacheStore, type PrCacheRow, type PrCacheStore } from './pr-cache-store';
 import { toPrFacts } from './to-pr-facts';
 import type { GhCheckRun, GhFile, GhPull, GhReview } from './types';
 
@@ -11,14 +10,27 @@ const TTL_OPEN_MS = 10 * 60 * 1000;
 const TTL_DONE_MS = 24 * 60 * 60 * 1000;
 
 const key = (r: PrRef) => `${r.owner}/${r.repo}`.toLowerCase();
-const fresh = (row: typeof schema.prCache.$inferSelect) =>
+const fresh = (row: PrCacheRow) =>
   Date.now() - row.fetchedAt.getTime() < (row.state === 'merged' || row.state === 'closed' ? TTL_DONE_MS : TTL_OPEN_MS);
 
-export async function fetchPrFacts(ref: PrRef, opts: { token: string | null; force?: boolean }): Promise<{ facts: PrFacts; cached: boolean; rateRemaining: number | null }> {
-  const [row] = await db.select().from(schema.prCache).where(and(eq(schema.prCache.repo, key(ref)), eq(schema.prCache.number, ref.number))).limit(1);
-  if (row && !opts.force && fresh(row)) return { facts: row.facts as PrFacts, cached: true, rateRemaining: null };
+interface FetchOpts {
+  token: string | null;
+  force?: boolean;
+  store?: PrCacheStore;
+  client?: ReturnType<typeof githubClient>;
+}
 
-  const gh = githubClient(opts.token);
+export async function fetchPrFacts(ref: PrRef, opts: FetchOpts): Promise<{ facts: PrFacts; cached: boolean; rateRemaining: number | null }> {
+  const store = opts.store ?? dbPrCacheStore;
+  const row = await store.get(key(ref), ref.number);
+  // `pr_cache` is keyed by (repo, number) only — it carries no notion of who may read a row. So a
+  // private PR must never be served out of the TTL window: it would hand one user's private facts
+  // to the next anonymous caller. Private rows always revalidate with the caller's own token and
+  // let GitHub arbitrate — 304 for someone with access (serve the cached facts below), 404 for
+  // everyone else (mapped to `pr_not_found`).
+  if (row && !opts.force && !row.isPrivate && fresh(row)) return { facts: row.facts, cached: true, rateRemaining: null };
+
+  const gh = opts.client ?? githubClient(opts.token);
   const base = { owner: ref.owner, repo: ref.repo, pull_number: ref.number };
   let pull: GhPull;
   let rateRemaining: number | null = null;
@@ -33,8 +45,8 @@ export async function fetchPrFacts(ref: PrRef, opts: { token: string | null; for
     etag = res.headers.etag ?? null;
   } catch (e) {
     if (e instanceof RequestError && e.status === 304 && row) {
-      await db.update(schema.prCache).set({ fetchedAt: new Date() }).where(and(eq(schema.prCache.repo, key(ref)), eq(schema.prCache.number, ref.number)));
-      return { facts: row.facts as PrFacts, cached: true, rateRemaining: null };
+      await store.touch(key(ref), ref.number);
+      return { facts: row.facts, cached: true, rateRemaining: null };
     }
     throw mapGitHubError(e);
   }
@@ -63,9 +75,6 @@ export async function fetchPrFacts(ref: PrRef, opts: { token: string | null; for
   // Mapper/DB failures are ours, not GitHub's — let them propagate so withRoute logs them
   // and returns a real 500 instead of a misleading 502 github_error.
   const facts = toPrFacts({ pull, reviews, files, checkRuns: checks });
-  await db
-    .insert(schema.prCache)
-    .values({ repo: key(ref), number: ref.number, etag, state: facts.state, facts, fetchedAt: new Date() })
-    .onConflictDoUpdate({ target: [schema.prCache.repo, schema.prCache.number], set: { etag, state: facts.state, facts, fetchedAt: new Date() } });
+  await store.put({ repo: key(ref), number: ref.number, etag, state: facts.state, facts, isPrivate: pull.base.repo.private, fetchedAt: new Date() });
   return { facts, cached: false, rateRemaining };
 }

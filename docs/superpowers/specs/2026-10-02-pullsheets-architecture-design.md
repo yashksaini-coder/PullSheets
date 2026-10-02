@@ -49,7 +49,7 @@ Product tables:
 | `settings` | one row per user: `editor` / `export` / `branding` / `notifications` jsonb | zod-validated on read and write; `updated_at` |
 | `exports` | the real `ExportItem` | `status: pending\|rendering\|ready\|failed`, `storage_key`, `bytes`, `kind: image\|video`, `format`, `scale`, `w`,`h`, PR facts snapshot, `created_at` |
 | `render_jobs` | one per video/still render | `export_id`, `provider: local\|lambda`, `provider_job_id`, `progress 0–1`, `error`, timestamps |
-| `pr_cache` | GitHub PR payload + `etag` + `fetched_at` keyed by `(repo, number)` | conditional `If-None-Match` fetches; TTL 10 min for open PRs, 24 h for merged/closed |
+| `pr_cache` | GitHub PR payload + `etag` + `fetched_at` + `is_private` keyed by `(repo, number)` | conditional `If-None-Match` fetches; TTL 10 min for open PRs, 24 h for merged/closed — **rows with `is_private` are exempt from the TTL** (§5 step 3) |
 | `webhook_events` | Stripe event ledger, `event_id UNIQUE` | processed before side effects; replayed events are no-ops |
 | `api_keys` | `key_hash`, `prefix`, `label`, `last_used_at`, `revoked_at` | plaintext shown once |
 | `social_connections` | `provider: x\|linkedin`, `provider_account_id`, encrypted tokens, `scopes`, `expires_at` | separate from `accounts` — posting ≠ login |
@@ -84,7 +84,12 @@ The existing `components/pr-card.tsx` `PrCard` becomes `Card family="midnight" f
 `GET /api/pr?url=` or `?repo=&number=`:
 1. `parsePrUrl` (existing) → `{repo, number}`; 400 on failure.
 2. Token: session user's decrypted GitHub token → else `GITHUB_PUBLIC_TOKEN` → else unauthenticated.
-3. `pr_cache` lookup; within TTL → return. Else conditional GET with `If-None-Match`; 304 → bump `fetched_at`, return cached.
+3. `pr_cache` lookup. A **public** row inside its TTL is returned as-is. A row for a **private**
+   repository (`is_private`) never short-circuits: the cache key is `(repo, number)` only and
+   carries no reader identity, so a private row is *always* revalidated with the caller's own
+   token. GitHub arbitrates — 304 → bump `fetched_at`, return cached; 404 → `pr_not_found` for
+   anyone without access. Otherwise a conditional GET with `If-None-Match`; 304 → bump
+   `fetched_at`, return cached.
 4. Fetch `pulls/{n}`, `pulls/{n}/reviews`, `pulls/{n}/files` (first 100), `commits/{sha}/check-runs` (via `@octokit/rest`).
 5. `toPrFacts()` mapper (pure, unit-tested). Type derives from conventional-commit prefix → labels → branch → author-bot, per the design doc's type table.
 6. Typed errors: `PrNotFound`, `PrForbidden` (private, no scope), `RateLimited { resetAt }`. Surface `x-ratelimit-remaining` in a response header.

@@ -8,6 +8,13 @@
       "when": 1790946902730,
       "tag": "0000_perfect_chimera",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1790951266270,
+      "tag": "0001_serious_shiver_man",
+      "breakpoints": true
     }
   ]
 }

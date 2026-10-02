@@ -55,7 +55,7 @@ export const accounts = pgTable(
     createdAt: created(),
     updatedAt: updated(),
   },
-  (t) => [index('accounts_user_idx').on(t.userId)],
+  (t) => [index('accounts_user_idx').on(t.userId), index('accounts_provider_account_idx').on(t.providerId, t.accountId)],
 );
 
 export const verifications = pgTable('verifications', {
@@ -130,6 +130,8 @@ export const prCache = pgTable(
     etag: text('etag'),
     state: text('state').notNull(), // PrState — drives TTL
     facts: jsonb('facts').notNull(), // PrFacts
+    // Private rows are never served straight from the TTL window — see lib/github/fetch-pr.ts.
+    isPrivate: boolean('is_private').notNull().default(false),
     fetchedAt: ts('fetched_at').notNull().defaultNow(),
   },
   (t) => [primaryKey({ columns: [t.repo, t.number] })],
