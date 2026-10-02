@@ -1,71 +1,81 @@
-# Pullsheets — Next.js
+# Pullsheets
 
-This is the Pullsheets MVP design turned into a working **Next.js 15 (App Router) + TypeScript** app. Pullsheets turns a GitHub pull request into a share-ready image or short clip for X, LinkedIn and Instagram.
+Turn a GitHub pull request into a share-ready image or clip for X, LinkedIn and Instagram.
 
-## Run it
+## Run locally
+
+Requirements: Node ≥ 20, pnpm, Docker.
 
 ```bash
-npm install
-npm run dev        # http://localhost:3000
-npm run build && npm start
+pnpm install
+cp .env.example .env.local
+# Fill Tier 0: BETTER_AUTH_SECRET and TOKEN_ENCRYPTION_KEY → `openssl rand -base64 32` (run twice)
+# Fill Tier 1: GITHUB_CLIENT_ID / GITHUB_CLIENT_SECRET from a GitHub OAuth App
+#   Homepage  http://localhost:3000   Callback  http://localhost:3000/api/auth/callback/github
+docker compose up -d
+pnpm db:migrate
+pnpm dev          # http://localhost:3000
 ```
 
-Node 18.18+ (20 LTS recommended).
+Sign in with GitHub, paste a PR URL in the editor, export a PNG.
 
-## Routes
+### Verify your setup
 
-| Route | File | What it is |
+The maintainers could not exercise sign-in during the phase-1 build — there were no GitHub OAuth
+credentials on the build machine. If you have real credentials in `.env.local`, this checklist is
+the phase-1 acceptance test; walk it once after `pnpm dev` is up:
+
+1. Sign in with GitHub from `/login`.
+2. `/account` shows your GitHub handle as the connected account.
+3. Paste a PR URL into the editor's import field.
+4. The card on the canvas updates with that PR's facts.
+5. Click Save PNG.
+6. The export appears in Recent exports (`/account`).
+
+## Environment
+
+Tier 0 must be set or the server refuses to start. Every other tier is optional: when its
+variables are absent the feature is disabled in the UI and its API routes answer `503
+feature_unconfigured`. See `.env.example` for every variable and `lib/env.ts` for the derivation.
+
+`.env.local` is git-ignored — it never leaves your machine. On first run, `pnpm db:migrate` must
+be run after `docker compose up -d` so the schema exists before the app boots.
+
+| Tier | Enables | Status |
 |---|---|---|
-| `/` | `app/page.tsx` | Landing: beta bar, glass nav, centered hero with a live “paste a PR link” editor mock, bento, how it works, pricing, FAQ, footer |
-| `/login` | `app/login/page.tsx` | Sign in: GitHub / GitLab / Bitbucket and a magic-link email |
-| `/editor` | `app/editor/page.tsx` | The editor (details below). `/editor?pr=<github PR url>` opens with that PR imported |
-| `/account` | `app/account/page.tsx` | Workspace with a sidebar: Overview, Recent exports, Export defaults, Editor defaults, Branding, API & integrations, Profile, Connected GitHub, Notifications, Billing, Danger zone. Each section is deep-linkable, e.g. `/account#billing` |
+| 0 | boot (Postgres, auth secret, encryption key) | ✅ |
+| 1 | GitHub login, private PR import | ✅ |
+| 2 | storage — export history, server renders | phase 3 |
+| 3 | video (Remotion local / Lambda) | phase 4 |
+| 4 | billing (Stripe) | phase 5 |
+| 5 | social posting (X, LinkedIn) | phase 6 |
 
-## What works in the editor
+## Scripts
 
-- **Modes:** Image, Browser (Safari / Chrome / Plain, light or dark chrome) and Device (MacBook / iPhone bezels)
-- **PR card:** light or dark theme, status (Open / Merged / Draft / Closed), radius, size
-- **Import:** paste a PR URL, or pick from Recent pull requests
-- **Background:** 6 gradients, 10 images, a custom solid color, padding, noise
-- **Layers:** caption title and tag, 3D overlay shapes with a size control
-- **3D:** 6 layout presets, depth, rotate X / Y / Z, reset
-- **Motion:** 8 clips with a timeline and playhead
-- **Toolbar:** undo / redo (⌘Z, ⇧⌘Z), rulers, grid, platform aspect presets (X, LinkedIn, Instagram square and portrait, Story, 16:9)
-- **Export:** **real PNG / JPG export** at 1–5× via `html-to-image`, copy to clipboard, an entry in Recent exports (stored in `localStorage` under `pullsheets.exports`)
-- **Also:** Start-over dialog and toasts
+`dev` `build` `start` · `typecheck` `lint` `format` `test` · `db:generate` `db:migrate` `db:push` `db:studio`
 
-## Stubbed — needs a backend
+## Layout
 
-| Feature | Where | Suggested implementation |
-|---|---|---|
-| PR import | `importUrl` in `app/editor/page.tsx` | A route handler `app/api/pr/route.ts` that calls `GET /repos/{owner}/{repo}/pulls/{n}` with the user's token. `lib/data.ts → PullRequest` is the shape it should return |
-| Auth | `/login` buttons link straight to `/editor` | Auth.js (NextAuth) with the GitHub provider; scopes `read:user` and `repo` (read-only) |
-| Recent PRs / exports | `RECENT_PRS`, `DEMO_EXPORTS` in `lib/data.ts` | Replace with DB- or API-backed queries |
-| Video (MP4 / GIF) | `doExport('mp4')` | Server-side render (Remotion or ffmpeg) |
-| Post to X / LinkedIn | `post()` | OAuth integrations; upload the PNG blob |
-| Billing | Billing section | Stripe Checkout and the Customer Portal |
-| Settings persistence | Account sections keep local state | Persist to the user profile |
+~~~
+app/            routes (server pages) + /api route handlers
+components/
+  cards/        the PR card library — pure React, no Next/browser APIs (lint-enforced). Renders in the browser and in Remotion.
+  editor/       editor shell, provider/reducer, panels, canvas, frames
+  account/      account shell
+  auth/         sign-in / sign-out
+  ui.tsx        primitives
+lib/
+  env.ts        tiered env + derived `features`
+  db/           drizzle schema + client        drizzle/   migrations
+  auth/         better-auth server + client
+  github/       octokit client, PrFacts mapper, ETag cache
+  editor/       Design schema + URL codec
+  errors.ts     AppError + withRoute
+styles/tokens/  design tokens (plain CSS)
+docs/           architecture spec, phase plans, PR Cards design reference
+design-reference/  original prototypes (not used at runtime)
+~~~
 
-## Design system
+## Architecture
 
-- **Tokens:** `styles/tokens/*.css`, copied verbatim from the PR Studio design system (colors, type, spacing, radius, shadows, motion). The font URLs are rewritten to `/fonts/*`.
-- **Theme:** dark by default (`<html class="dark">`). Brand red is `#E8452B` and the focus ring is `#F26E52`; everything else is warm black plus white at low alpha (`--fg-a*`).
-- **Fonts:** Inter (variable) and JetBrains Mono, served from `public/fonts`.
-- **Icons:** `lucide-react`. Brand marks (GitHub, X, LinkedIn, GitLab, Bitbucket) are inline SVGs in `components/brand-icons.tsx`.
-- **Primitives:** `components/ui.tsx` (Button, Segmented, Slider, Switch, Input, Tile, Section, StatusPill, Dialog, Toaster, Logo, BetaBar). Styles live in `app/globals.css` as plain CSS classes, with no Tailwind dependency.
-- **PR card and browser frame:** `components/pr-card.tsx`. They are sized in container-query units (`cqw`) so the card scales cleanly with the canvas and with export resolution.
-
-## Assets
-
-- `public/assets/backgrounds/*` — 11 canvas backgrounds
-- `public/assets/overlays/*` — 3D overlay shapes
-- `public/fonts/*` — Inter and JetBrains Mono
-
-## Design reference
-
-`design-reference/*.dc.html` holds the original HTML prototypes the app was built from. They are for visual comparison only and are not used at runtime.
-
-## Placeholders to replace
-
-- The demo account (`@yashksaini-coder`, “Yash Saini”), PR numbers and the star count are illustrative.
-- The footer's X and LinkedIn links point at the sites' home pages; swap in real profile URLs.
+`docs/superpowers/specs/2026-10-02-pullsheets-architecture-design.md` — decisions, data model, subsystems and phases. Phase plans live in `docs/superpowers/plans/`.

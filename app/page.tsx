@@ -3,9 +3,11 @@
 import { useState, type FormEvent, type ReactNode } from 'react';
 import { useRouter } from 'next/navigation';
 import { ArrowRight, Clock, Copy, Download, GitMerge, GitPullRequest, Globe, Grid2x2, Image as ImageIcon, Layers, Link2, Palette, Plus, Ratio, Redo2, Ruler, SlidersHorizontal, Smartphone, Star, Undo2, Upload, WandSparkles } from 'lucide-react';
-import { Avatar, BetaBar, Button, Kbd, Logo, Segmented, StatusPill } from '@/components/ui';
+import { Avatar, BetaBar, Button, Logo, Segmented, StatusPill } from '@/components/ui';
 import { GitHubIcon, LinkedInIcon, XIcon } from '@/components/brand-icons';
 import { BACKGROUNDS } from '@/lib/data';
+import { Card, SAMPLE_FACTS } from '@/components/cards';
+import { CardScaler } from '@/components/editor/CardScaler';
 
 const MODE_OPTIONS = [
   { id: 'image', label: 'Image', icon: <ImageIcon size={12} /> },
@@ -125,10 +127,10 @@ export default function LandingPage() {
                   </div>
                   <div className="dot-grid" style={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 28, minWidth: 0 }}>
                     <div style={{ position: 'relative', width: '100%', aspectRatio: '16 / 9', borderRadius: 10, overflow: 'hidden', background: 'var(--gradient-ember)', boxShadow: '0 0 0 1px var(--fg-a10),0 24px 48px rgba(0,0,0,.35)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20 }}>
-                      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 12, textAlign: 'center', color: '#fff', width: '100%', maxWidth: 440 }}>
-                        <span style={{ width: 64, height: 64, borderRadius: 18, border: '1px dashed rgba(255,255,255,.6)', background: 'rgba(11,10,10,.25)', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', backdropFilter: 'blur(6px)' }}><Plus size={30} strokeWidth={1.5} /></span>
-                        <div style={{ fontSize: 14, fontWeight: 500, textShadow: '0 1px 4px rgba(0,0,0,.35)' }}>Drag &amp; drop a screenshot, or paste a pull-request link</div>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, color: 'rgba(255,255,255,.8)' }}><Kbd>⌘ V</Kbd><span>to paste</span></div>
+                      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 14, width: '100%', maxWidth: 440 }}>
+                        <CardScaler nativeWidth={420}>
+                          <Card family="midnight" format="standard" facts={SAMPLE_FACTS} />
+                        </CardScaler>
                         <form onSubmit={submit} className="url-pill">
                           <Link2 size={14} style={{ color: 'rgba(255,255,255,.7)', flexShrink: 0 }} />
                           <input value={url} onChange={(e) => setUrl(e.target.value)} placeholder="github.com/owner/repo/pull/482" aria-label="Pull request URL" />
