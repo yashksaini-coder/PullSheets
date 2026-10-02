@@ -1,28 +1,22 @@
-'use client';
-
 import Link from 'next/link';
-import { useState, type FormEvent } from 'react';
+import { redirect } from 'next/navigation';
 import { ArrowRight, ChevronLeft } from 'lucide-react';
-import { BetaBar, Button, Input, Logo, LogoMark, Toaster, useToasts } from '@/components/ui';
+import { BetaBar, Logo, LogoMark } from '@/components/ui';
 import { BitbucketIcon, GitHubIcon, GitLabIcon, LinkedInIcon, XIcon } from '@/components/brand-icons';
+import { SignInGitHub } from '@/components/auth/SignInGitHub';
+import { getSession } from '@/lib/auth/session';
+import { features } from '@/lib/env';
 
 const tile = { width: 60, height: 60, borderRadius: 14, background: 'var(--fg-a6)', boxShadow: '0 0 0 1px var(--fg-a10)', display: 'inline-flex', alignItems: 'center', justifyContent: 'center' } as const;
 const altBtn = { display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10, height: 44, borderRadius: 6, background: 'var(--fg-a4)', boxShadow: '0 0 0 1px var(--fg-a15)', color: 'var(--foreground)', fontSize: 14, fontWeight: 500 } as const;
+const altBtnOff = { ...altBtn, opacity: 0.5, pointerEvents: 'none' } as const;
 
-export default function LoginPage() {
-  const [email, setEmail] = useState('');
-  const [sent, setSent] = useState(false);
-  const { toasts, toast, dismiss } = useToasts();
-
-  const sendLink = (e?: FormEvent) => {
-    e?.preventDefault();
-    if (/.+@.+\..+/.test(email)) {
-      setSent(true);
-      toast({ type: 'success', title: 'Check your inbox', description: `A sign-in link is on its way to ${email}.` });
-    } else {
-      toast({ type: 'error', title: 'Enter a valid email', description: 'Something like you@company.com' });
-    }
-  };
+export default async function LoginPage({ searchParams }: { searchParams: Promise<{ next?: string; error?: string }> }) {
+  const { next: raw = '/editor', error } = await searchParams;
+  // `next` is attacker-controllable; only same-origin paths may be redirected to.
+  const next = raw.startsWith('/') && !raw.startsWith('//') ? raw : '/editor';
+  const session = await getSession();
+  if (session) redirect(next);
 
   return (
     <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
@@ -59,21 +53,15 @@ export default function LoginPage() {
                 <p style={{ margin: '10px 0 0', fontSize: 15, lineHeight: 1.5, color: 'var(--muted-foreground)' }}>Sign in with your git host. Your exports, defaults and recent pull requests come along.</p>
               </div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-                <Button size="lg" fullWidth href="/editor"><GitHubIcon size={18} />Continue with GitHub</Button>
-                <Link href="/editor" style={altBtn} className="btn-outline"><GitLabIcon />Continue with GitLab</Link>
-                <Link href="/editor" style={altBtn} className="btn-outline"><BitbucketIcon />Continue with Bitbucket</Link>
+                {error && <div className="chip" role="alert">GitHub sign-in failed. Try again.</div>}
+                <SignInGitHub next={next} disabled={!features.auth} reason="Set GITHUB_CLIENT_ID and GITHUB_CLIENT_SECRET in .env.local" />
+                <Link href="#" aria-disabled="true" title="Coming later" style={altBtnOff} className="btn-outline"><GitLabIcon />Continue with GitLab</Link>
+                <Link href="#" aria-disabled="true" title="Coming later" style={altBtnOff} className="btn-outline"><BitbucketIcon />Continue with Bitbucket</Link>
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: 10, color: 'var(--muted-foreground)', fontSize: 12 }}>
                 <span style={{ flex: 1, height: 1, background: 'var(--fg-a10)' }} />or<span style={{ flex: 1, height: 1, background: 'var(--fg-a10)' }} />
               </div>
-              <form onSubmit={sendLink} style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-                <label className="label" htmlFor="email">Work email</label>
-                <div style={{ display: 'flex', gap: 8 }}>
-                  <Input id="email" type="email" placeholder="you@company.com" value={email} onChange={(e) => setEmail(e.target.value)} />
-                  <Button variant="secondary" type="submit">{sent ? 'Link sent' : 'Send link'}</Button>
-                </div>
-                <p style={{ margin: 0, fontSize: 12, lineHeight: 1.5, color: 'var(--muted-foreground)' }}>We&apos;ll email you a one-time sign-in link. Teams on SSO land here too.</p>
-              </form>
+              <p className="muted" style={{ fontSize: 12 }}>Email sign-in is coming later. GitHub is the only provider in the beta.</p>
               <p style={{ margin: 0, fontSize: 12, lineHeight: 1.5, color: 'var(--muted-foreground)' }}>
                 By continuing you agree to the <a href="#" style={{ color: 'var(--foreground)' }}>Terms</a> and <a href="#" style={{ color: 'var(--foreground)' }}>Privacy policy</a>. Pullsheets only reads pull-request metadata; it never writes to your repos.
               </p>
@@ -85,7 +73,6 @@ export default function LoginPage() {
           </div>
         </section>
       </div>
-      <Toaster toasts={toasts} dismiss={dismiss} />
     </div>
   );
 }
