@@ -4,6 +4,7 @@ import { ArrowRight, ChevronLeft } from 'lucide-react';
 import { BetaBar, Logo, LogoMark } from '@/components/ui';
 import { BitbucketIcon, GitHubIcon, GitLabIcon, LinkedInIcon, XIcon } from '@/components/brand-icons';
 import { SignInGitHub } from '@/components/auth/SignInGitHub';
+import { safeNextPath } from '@/lib/auth/safe-next';
 import { getSession } from '@/lib/auth/session';
 import { features } from '@/lib/env';
 
@@ -12,9 +13,8 @@ const altBtn = { display: 'flex', alignItems: 'center', justifyContent: 'center'
 const altBtnOff = { ...altBtn, opacity: 0.5, pointerEvents: 'none' } as const;
 
 export default async function LoginPage({ searchParams }: { searchParams: Promise<{ next?: string; error?: string }> }) {
-  const { next: raw = '/editor', error } = await searchParams;
-  // `next` is attacker-controllable; only same-origin paths may be redirected to.
-  const next = raw.startsWith('/') && !raw.startsWith('//') ? raw : '/editor';
+  const { next: raw, error } = await searchParams;
+  const next = safeNextPath(raw);
   const session = await getSession();
   if (session) redirect(next);
 

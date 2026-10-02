@@ -1,20 +1,44 @@
 import { expect, test } from 'vitest';
-import { parseAdditionalUserInputFromProviderProfile } from 'better-auth/db';
-import { auth } from './index';
+import { auth, githubProvider, mapGitHubProfile } from './index';
 
-// githubLogin arrives from mapProfileToUser, so the field must stay `input: true`;
-// better-auth strips `input: false` fields from the provider profile too. These two
-// assertions pin that pair: the value gets through, and clients still cannot set it.
+const inputFlag = (field: 'githubLogin' | 'plan') => (auth.options.user!.additionalFields![field] as { input?: boolean }).input;
 
-test('githubLogin from the GitHub profile is persisted', () => {
-  expect(parseAdditionalUserInputFromProviderProfile(auth.options, { githubLogin: 'octocat' }, 'create')).toMatchObject({ githubLogin: 'octocat' });
+// `users.github_login` has exactly one writer (the GitHub profile) and must have no other.
+// These assertions pin that pair: the mapper that supplies it, the field config that lets it
+// through, and the guard that stops clients setting it.
+
+test('mapGitHubProfile turns the GitHub profile into the githubLogin field', () => {
+  expect(mapGitHubProfile({ login: 'octocat' })).toEqual({ githubLogin: 'octocat' });
 });
 
-test('input:false would silently drop it', () => {
-  const opts = { ...auth.options, user: { additionalFields: { githubLogin: { type: 'string' as const, required: false, input: false } } } };
-  expect(parseAdditionalUserInputFromProviderProfile(opts, { githubLogin: 'octocat' }, 'create')).toEqual({});
+test('the GitHub provider uses that mapper, so a sign-in persists the handle', () => {
+  // features.auth is false under test, so socialProviders is {} — assert on the config object.
+  expect(githubProvider.mapProfileToUser).toBe(mapGitHubProfile);
+  expect(githubProvider.scope).toEqual(['read:user', 'user:email', 'repo']);
+});
+
+test('githubLogin stays writable, or the provider profile value is silently dropped', () => {
+  // better-auth's parseAdditionalUserInputFromProviderProfile skips `input: false` fields,
+  // so `input: false` here would leave github_login null forever.
+  expect(inputFlag('githubLogin')).not.toBe(false);
+});
+
+test('plan stays server-owned', () => {
+  expect(inputFlag('plan')).toBe(false);
 });
 
 test('clients cannot set githubLogin through /update-user', async () => {
   await expect(auth.api.updateUser({ body: { githubLogin: 'octocat' } })).rejects.toThrow('githubLogin is not allowed to be set');
+});
+
+test('the guard is keyed on the field, not on /update-user, so future routes are covered', async () => {
+  const res = await auth.handler(
+    new Request('http://localhost:3000/api/auth/sign-up/email', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ email: 'a@b.com', password: 'hunter2hunter2', name: 'a', githubLogin: 'victim' }),
+    }),
+  );
+  expect(res.status).toBe(400);
+  await expect(res.json()).resolves.toMatchObject({ message: 'githubLogin is not allowed to be set' });
 });
