@@ -1,13 +1,46 @@
-node_modules
-.next
-out
-.env*.local
-*.tsbuildinfo
-.DS_Store
+# dependencies
+node_modules/
+.pnp
+.pnp.js
 
-.remember
-.data
-.env
+# next.js
+.next/
+out/
+*.tsbuildinfo
+
+# build / test output
+dist/
 coverage/
+.vitest/
+
+# environment — only .env.example is committed
+.env
+.env.*
+!.env.example
+
+# local data (STORAGE_DRIVER=local writes here)
+.data/
+
+# logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+
+# editors / OS
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+*.swp
+
+# deployment / tooling
 .vercel
+.turbo/
+.eslintcache
+
+# agent scratch (never source)
+.remember/
 .superpowers/
+.claude/*.local.*
