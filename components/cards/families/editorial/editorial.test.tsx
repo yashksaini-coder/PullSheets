@@ -1,5 +1,8 @@
 // @vitest-environment jsdom
 import { render } from '@testing-library/react';
+import { readFileSync } from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
 import { Card, SAMPLE_FACTS } from '../../index';
 import { figuresSentence } from '../../layouts/shared';
@@ -20,5 +23,26 @@ describe('editorial', () => {
   });
   it('figuresSentence survives sparse facts', () => {
     expect(figuresSentence({ ...SAMPLE_FACTS, diff: { additions: 0, deletions: 0, files: 0 }, checks: { passed: 0, total: 0, items: [] } })).toBe('No lines changed. No checks reported. No conflicts with main.');
+  });
+  it('headline and body win the cascade over the base rules (base.css loads before tokens.css)', () => {
+    const dir = path.dirname(fileURLToPath(import.meta.url));
+    const base = readFileSync(path.join(dir, '..', '..', 'base.css'), 'utf8');
+    const tokens = readFileSync(path.join(dir, 'tokens.css'), 'utf8');
+    // jsdom's document, reached via globalThis so the cards-must-stay-pure lint rule
+    // (no bare `document`) doesn't flag this test-only cascade probe.
+    const doc = globalThis.document;
+    const style = doc.createElement('style');
+    style.textContent = base + '\n' + tokens;
+    doc.head.appendChild(style);
+    const article = doc.createElement('article');
+    article.className = 'pc pc-editorial pc-standard';
+    article.innerHTML = '<h2 class="pc-title pc-ed-headline">x</h2><p class="pc-body pc-ed-body">y</p>';
+    doc.body.appendChild(article);
+    const h2 = article.querySelector('h2') as HTMLElement;
+    const p = article.querySelector('p') as HTMLElement;
+    expect(getComputedStyle(h2).fontSize).toBe('24px');
+    expect(getComputedStyle(p).fontSize).toBe('13.5px');
+    doc.body.removeChild(article);
+    doc.head.removeChild(style);
   });
 });
