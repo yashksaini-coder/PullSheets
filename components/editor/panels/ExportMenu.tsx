@@ -76,9 +76,14 @@ export function ExportMenu({ stageRef, onNeedMotion }: { stageRef: RefObject<HTM
 
   return (
     <div className="ed-group" style={{ gap: 6 }}>
-      <Button variant="ghost" size="sm" onClick={copyImage} disabled={!canExport} title={needsPr}><Copy size={14} />Copy</Button>
+      {/* .btn:disabled sets pointer-events:none, so the tooltip has to sit on a wrapper that still gets hovered. */}
+      <span title={needsPr} style={{ display: 'inline-flex' }}>
+        <Button variant="ghost" size="sm" onClick={copyImage} disabled={!canExport}><Copy size={14} />Copy</Button>
+      </span>
       <div ref={saveRef} style={{ position: 'relative' }}>
-        <Button size="sm" onClick={() => setOpen((o) => !o)} aria-expanded={open} disabled={!canExport} title={needsPr}><Download size={14} />Save</Button>
+        <span title={needsPr} style={{ display: 'inline-flex' }}>
+          <Button size="sm" onClick={() => setOpen((o) => !o)} aria-expanded={open} disabled={!canExport}><Download size={14} />Save</Button>
+        </span>
         {open && (
           <div className="popover" style={{ right: 0, width: 300, display: 'flex', flexDirection: 'column', gap: 12 }}>
             <div className="row-between">
@@ -99,8 +104,12 @@ export function ExportMenu({ stageRef, onNeedMotion }: { stageRef: RefObject<HTM
             <Slider label="Scale" value={exportScale} min={1} max={5} onChange={setExportScale} display={`${exportScale}×`} />
             <Button size="sm" fullWidth onClick={() => doExport()}><Download size={14} />Export {format.toUpperCase()}</Button>
             <div className="grid-2" style={{ gap: 6 }}>
-              <Button variant="outline" size="sm" disabled title={socialTitle}><XIcon size={13} />Post to X</Button>
-              <Button variant="outline" size="sm" disabled title={socialTitle}><LinkedInIcon size={13} />LinkedIn</Button>
+              <span title={socialTitle} style={{ display: 'inline-flex' }}>
+                <Button variant="outline" size="sm" fullWidth disabled><XIcon size={13} />Post to X</Button>
+              </span>
+              <span title={socialTitle} style={{ display: 'inline-flex' }}>
+                <Button variant="outline" size="sm" fullWidth disabled><LinkedInIcon size={13} />LinkedIn</Button>
+              </span>
             </div>
             <Button variant="ghost" size="sm" fullWidth onClick={copyImage}><Copy size={14} />Copy to clipboard</Button>
           </div>

@@ -53,7 +53,7 @@ export function CardPanel() {
             {CARD_FORMATS.map((f) => {
               // Unregistered layouts would render Card's pc-missing placeholder and be exportable.
               const off = resolveCard(d.cardFamily, f) === null;
-              return <option key={f} value={f} disabled={off} title={off ? 'Lands in phase 2' : undefined}>{title(f)}</option>;
+              return <option key={f} value={f} disabled={off} title={off ? 'Not available' : undefined}>{title(f)}</option>;
             })}
           </select>
         </label>

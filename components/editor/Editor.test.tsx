@@ -36,7 +36,9 @@ describe('<Editor />', () => {
     expect(getByLabelText('Pull request URL')).toBeTruthy();
     // Nothing of the sample PR may be exported or recorded.
     expect(save(getByText).disabled).toBe(true);
-    expect(save(getByText).title).toBe('Import a pull request first');
+    // The tooltip sits on the wrapper span: .btn:disabled has pointer-events:none.
+    expect(save(getByText).closest('span')?.title).toBe('Import a pull request first');
+    expect(save(getByText).title).toBe('');
     expect(getByText('Copy').closest('button')?.disabled).toBe(true);
     expect(getByText('Remove').closest('button')?.disabled).toBe(true);
     await waitFor(() => expect(fetch).toHaveBeenCalledWith('/api/pr/recent'));

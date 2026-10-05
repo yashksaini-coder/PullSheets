@@ -77,7 +77,7 @@ components/cards/
 
 `PrFacts` (the "nine facts" plus body and files): `repo {owner,name}`, `number`, `title`, `body`, `state`, `type`, `author {login,name,avatar,isBot}`, `head`, `base`, `diff {additions,deletions,files}`, `checks {passed,total,items[]}`, `reviews {approved,requested,items[]}`, `labels[]`, `mergeCommit?`, `timestamps {opened,updated,merged?}`, `snapshotAt`, `files[] {path,additions,deletions}` (Detail formats).
 
-Fonts: Inter + JetBrains Mono (present) plus Barlow, Barlow Condensed, Manrope, Instrument Sans, Chakra Petch, Newsreader — self-hosted woff2, latin subset, `font-display: swap`, loaded only by the family that needs them via `next/font/local` or `@font-face` in the family's `tokens.css`.
+Fonts: Inter + JetBrains Mono (present) plus Barlow, Barlow Condensed, Manrope, Instrument Sans, Chakra Petch, Newsreader — self-hosted woff2, latin subset, `font-display: swap`, self-hosted via `@fontsource` packages imported once in `app/layout.tsx` (browsers fetch a woff2 only when a family uses it).
 
 Base rules shared by every format live in `components/cards/base.css`; `cards.css` only imports (base first, then each family's `tokens.css`), so family tokens win the cascade purely by source order.
 

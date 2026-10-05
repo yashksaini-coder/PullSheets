@@ -8,7 +8,7 @@
   <img alt="TypeScript strict" src="https://img.shields.io/badge/TypeScript-strict-3178C6?style=flat-square&logo=typescript&logoColor=white">
   <img alt="Postgres + Drizzle" src="https://img.shields.io/badge/Postgres-Drizzle-336791?style=flat-square&logo=postgresql&logoColor=white">
   <img alt="pnpm" src="https://img.shields.io/badge/pnpm-11-F69220?style=flat-square&logo=pnpm&logoColor=white">
-  <img alt="Status: phase 1 — foundation" src="https://img.shields.io/badge/status-phase%201%20%C2%B7%20foundation-7A736F?style=flat-square">
+  <img alt="Status: phase 2 — card library" src="https://img.shields.io/badge/status-phase%202%20%C2%B7%20card%20library-7A736F?style=flat-square">
 </p>
 
 <p align="center">
@@ -43,9 +43,9 @@
 
 ## Status
 
-This is **phase 1 of 7 — Foundation**: the application runs end to end locally with real auth, a real database and real GitHub import. Everything below marked *phase N* is designed (see [the architecture spec](docs/superpowers/specs/2026-10-02-pullsheets-architecture-design.md)) but not built yet.
+Phases 1–2 of 7 are complete (foundation, card library): the application runs end to end locally with real auth, a real database and real GitHub import, and the card library ships seven families across six formats. Everything below marked *phase N* is designed (see [the architecture spec](docs/superpowers/specs/2026-10-02-pullsheets-architecture-design.md)) but not built yet.
 
-| Area | Phase 1 | Next |
+| Area | Status | Next |
 |---|---|---|
 | GitHub sign-in (better-auth), encrypted tokens, protected routes | ✅ | — |
 | PR import with ETag + TTL cache, typed errors, private-PR revalidation | ✅ | Redis-backed limiter when multi-instance (phase 7) |
