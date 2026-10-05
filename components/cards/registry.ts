@@ -6,6 +6,7 @@ import { DetailWide } from './layouts/DetailWide';
 import { Digest } from './layouts/Digest';
 import { QueueRow } from './layouts/QueueRow';
 import { Standard } from './layouts/Standard';
+import { FuturisticStandard } from './families/futuristic/Standard';
 
 export type CardComponent = ComponentType<{ facts: PrFacts; family: CardFamily }>;
 
@@ -13,8 +14,10 @@ export type CardComponent = ComponentType<{ facts: PrFacts; family: CardFamily }
 export const LAYOUTS: Record<CardFormat, CardComponent> = {
   'queue-row': QueueRow, compact: Compact, standard: Standard, detail: Detail, digest: Digest, 'detail-wide': DetailWide,
 };
-export const FAMILY_OVERRIDES: Partial<Record<CardFamily, Partial<Record<CardFormat, CardComponent>>>> = {};
-export const AVAILABLE_FAMILIES: CardFamily[] = ['midnight', 'industrial', 'modern', 'minimal'];
+export const FAMILY_OVERRIDES: Partial<Record<CardFamily, Partial<Record<CardFormat, CardComponent>>>> = {
+  futuristic: { standard: FuturisticStandard },
+};
+export const AVAILABLE_FAMILIES: CardFamily[] = ['midnight', 'industrial', 'modern', 'minimal', 'futuristic'];
 
 /** Every CardFormat now resolves; the `| null` stays for the editor's picker, which probes unknown formats. */
 export function resolveCard(family: CardFamily, format: CardFormat): CardComponent | null {

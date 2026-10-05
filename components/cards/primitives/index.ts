@@ -8,3 +8,4 @@ export { Checks } from './Checks';
 export { CheckList } from './CheckList';
 export { FileHeat } from './FileHeat';
 export { ReviewSegments } from './ReviewSegments';
+export { TickBar } from './TickBar';
