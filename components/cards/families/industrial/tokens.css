@@ -16,10 +16,12 @@
 .pc-industrial .pc-pill { border-radius: 0; border-width: 1px; }
 .pc-industrial .pc-chip { border-radius: 0; background: transparent; border: 1px solid var(--pc-accent); color: var(--pc-accent); }
 .pc-industrial .pc-branches code { border-radius: 0; background: transparent; border: 1px solid var(--pc-line); }
-/* ruled 4-cell spec grid for the stats row */
-.pc-industrial .pc-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; border: 1px solid var(--pc-line); font-size: 12px; }
-.pc-industrial .pc-stats > * { padding: 6px 8px; border-right: 1px solid var(--pc-line); margin: 0; display: flex; flex-direction: column; gap: 2px; }
-.pc-industrial .pc-stats > *:last-child { border-right: 0; }
+/* ruled 4-cell spec grid for the stats row — Standard only: it's the one format with all four cells
+   (Change, Files, Checks + the unlabelled delta); Compact, QueueRow and Digest have fewer stats and
+   would otherwise get empty bordered cells from a grid sized for four. */
+.pc-industrial.pc-standard .pc-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; border: 1px solid var(--pc-line); font-size: 12px; }
+.pc-industrial.pc-standard .pc-stats > * { padding: 6px 8px; border-right: 1px solid var(--pc-line); margin: 0; display: flex; flex-direction: column; gap: 2px; }
+.pc-industrial.pc-standard .pc-stats > *:last-child { border-right: 0; }
 /* Labels only where the layout has room for a second line: Compact and QueueRow stay label-free. */
 .pc-industrial.pc-standard [data-k]::before, .pc-industrial.pc-digest [data-k]::before { display: block; font-size: 9px; letter-spacing: .08em; text-transform: uppercase; color: var(--pc-faint); font-family: var(--pc-font); font-weight: 500; }
 .pc-industrial .pc-foot { background: transparent; border-top: 1px solid var(--pc-line); }

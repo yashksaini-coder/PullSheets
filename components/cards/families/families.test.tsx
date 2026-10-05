@@ -58,4 +58,34 @@ describe('families', () => {
       doc.head.removeChild(style);
     }
   });
+  it("industrial's ruled stats grid is scoped to Standard; other formats keep the default flex row", () => {
+    const dir = path.dirname(fileURLToPath(import.meta.url));
+    const base = readFileSync(path.join(dir, '..', 'base.css'), 'utf8');
+    const tokens = readFileSync(path.join(dir, 'industrial', 'tokens.css'), 'utf8');
+    const doc = globalThis.document;
+    const style = doc.createElement('style');
+    style.textContent = base + '\n' + tokens;
+    doc.head.appendChild(style);
+
+    const compact = doc.createElement('article');
+    compact.className = 'pc pc-industrial pc-compact';
+    const compactStats = doc.createElement('div');
+    compactStats.className = 'pc-stats';
+    compact.appendChild(compactStats);
+    doc.body.appendChild(compact);
+
+    const standard = doc.createElement('article');
+    standard.className = 'pc pc-industrial pc-standard';
+    const standardStats = doc.createElement('div');
+    standardStats.className = 'pc-stats';
+    standard.appendChild(standardStats);
+    doc.body.appendChild(standard);
+
+    expect(getComputedStyle(compactStats).display).toBe('flex');
+    expect(getComputedStyle(standardStats).display).toBe('grid');
+
+    doc.body.removeChild(compact);
+    doc.body.removeChild(standard);
+    doc.head.removeChild(style);
+  });
 });
