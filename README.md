@@ -38,7 +38,7 @@
 ## What it does
 
 1. **Import** — paste `github.com/owner/repo/pull/123`. Pullsheets fetches the PR, its reviews, files and check runs, and maps them to one `PrFacts` model. Results are cached with ETags so refreshes cost almost nothing against your rate limit.
-2. **Design** — pick a card style and format, a browser or device frame, a background, 3D tilt, captions and overlays. Undo/redo, platform presets for X, LinkedIn, Instagram and Stories.
+2. **Design** — pick a card style and format, a browser or device frame, a background, 3D tilt, captions and overlays. Card styles span seven families — Midnight, Industrial, Modern, Minimal, Futuristic, Terminal and Editorial — each across six formats (Queue Row, Compact, Standard, Detail, Digest, Detail Wide). Undo/redo, platform presets for X, LinkedIn, Instagram and Stories.
 3. **Export** — PNG/JPG at 1–5× straight from the browser. Video (MP4/GIF), server-side renders, billing and social posting are the next phases and the UI says so instead of pretending.
 
 ## Status
@@ -48,8 +48,8 @@ This is **phase 1 of 7 — Foundation**: the application runs end to end locally
 | Area | Phase 1 | Next |
 |---|---|---|
 | GitHub sign-in (better-auth), encrypted tokens, protected routes | ✅ | — |
-| PR import with ETag + TTL cache, typed errors, private-PR revalidation | ✅ | per-IP limits, cache sweep (phase 2) |
-| Card library: `PrFacts` model, 8 states, 8 type chips, Midnight · Standard | ✅ | 6 formats × 7 families, self-hosted fonts (phase 2) |
+| PR import with ETag + TTL cache, typed errors, private-PR revalidation | ✅ | Redis-backed limiter when multi-instance (phase 7) |
+| Card library: `PrFacts` model, 8 states, 8 type chips, Midnight · Standard | ✅ | ✅ 6 formats × 7 families |
 | Editor: server page, reducer with history, panels, live import, PNG export | ✅ | — |
 | Account: session-backed, connected GitHub, recent PRs, sign-out | ✅ | settings persistence (phase 3) |
 | Storage + server-side `renderStill` for paywalled exports | — | phase 3 |
@@ -160,12 +160,12 @@ docs/
 | `pnpm test` · `test:watch` | Vitest (node + jsdom) |
 | `pnpm db:generate` · `db:migrate` · `db:push` · `db:studio` | Drizzle Kit: generate a migration · apply · push schema · browse |
 
-## Known limitations (phase 1)
+## Known limitations
 
 - **Anonymous `/api/pr` is limited to 30 requests per 10 minutes per client IP** by an in-process token bucket (state resets on deploy; move to Redis before scaling out). `pr_cache` rows older than 7 days are swept opportunistically.
 - Private PRs are never served from the cache TTL; importing one costs a (conditional) GitHub call every time.
-- Only the `midnight` family and the `standard` format have a layout; the other formats are disabled in the picker until phase 2.
 - Video export, server-side renders, billing and social posting are phases 3–6; their controls say so rather than pretending.
+- Card truncation for very long branch names and paths is CSS-only and verified in the browser, not in the test suite.
 - **Deployment notes:** the anonymous `/api/pr` rate limit trusts the first `x-forwarded-for` hop, which is only safe behind a proxy that overwrites that header (Vercel, Cloudflare, nginx with `real_ip`) — a direct-exposed deploy needs one in front of it, or the limit is bypassable with a spoofed header.
 
 ## Roadmap
@@ -173,7 +173,7 @@ docs/
 | Phase | Delivers |
 |---|---|
 | **1 · Foundation** ✅ | env, Postgres, auth, GitHub import, card model + Midnight, editor refactor, account |
-| 2 · Card library | 6 formats × 7 families (Midnight, Industrial, Modern, Minimal, Futuristic, Terminal, Editorial), fonts, `/api/pr` limits |
+| **2 · Card library** ✅ | 6 formats × 7 families (Midnight, Industrial, Modern, Minimal, Futuristic, Terminal, Editorial), self-hosted fonts, per-IP `/api/pr` limiter + cache sweep |
 | 3 · Export | storage drivers, server-side `renderStill`, export history in Postgres, entitlements |
 | 4 · Video | Remotion compositions for 8 clips, local + Lambda, render jobs with progress |
 | 5 · Billing | Stripe Checkout + Portal, webhook idempotency, plan gating |

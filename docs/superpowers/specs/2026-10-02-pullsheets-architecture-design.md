@@ -79,6 +79,8 @@ components/cards/
 
 Fonts: Inter + JetBrains Mono (present) plus Barlow, Barlow Condensed, Manrope, Instrument Sans, Chakra Petch, Newsreader — self-hosted woff2, latin subset, `font-display: swap`, loaded only by the family that needs them via `next/font/local` or `@font-face` in the family's `tokens.css`.
 
+Base rules shared by every format live in `components/cards/base.css`; `cards.css` only imports (base first, then each family's `tokens.css`), so family tokens win the cascade purely by source order.
+
 The existing `components/pr-card.tsx` `PrCard` becomes `Card family="midnight" format="standard"`; `BrowserFrame` and the device bezels stay in `components/editor/frames/` (they are editor chrome, not card content).
 
 ## 5. GitHub ingestion — `lib/github/`
@@ -95,6 +97,8 @@ The existing `components/pr-card.tsx` `PrCard` becomes `Card family="midnight" f
 4. Fetch `pulls/{n}`, `pulls/{n}/reviews`, `pulls/{n}/files` (first 100), `commits/{sha}/check-runs` (via `@octokit/rest`).
 5. `toPrFacts()` mapper (pure, unit-tested). Type derives from conventional-commit prefix → labels → branch → author-bot, per the design doc's type table.
 6. Typed errors: `PrNotFound`, `PrForbidden` (private, no scope), `RateLimited { resetAt }`. Surface `x-ratelimit-remaining` in a response header.
+
+Anonymous callers are limited to 30 requests per 10 minutes per IP (in-memory token bucket, oldest-touched eviction above 50,000 keys); `pr_cache` is swept of rows older than 7 days at most every 10 minutes; every GitHub call carries a 10 s timeout; `mergeable_state: 'unknown'` is never cached.
 
 OAuth App scopes: `read:user user:email repo`. Known migration: GitHub App for fine-grained install permissions and higher limits.
 
@@ -144,7 +148,7 @@ Sections keep their IDs (`#overview … #danger`). Each section is a server-load
 | # | Phase | Delivers | Done when |
 |---|---|---|---|
 | 1 | Foundation | git repo, pnpm, env + features, docker-compose Postgres, Drizzle schema + migrations, better-auth GitHub, `/api/pr` with cache, editor refactor, card model + primitives + Midnight Standard, `.env.example`, README | `cp .env.example .env.local`, fill Tier 0–1, `docker compose up -d`, `pnpm db:migrate`, `pnpm dev` → log in with GitHub, paste a PR URL, see it in the editor, export PNG |
-| 2 | Card library | 6 layouts, 7 families, registry, editor picker, fonts | every (family, format) renders in editor with real `PrFacts` |
+| 2 | Card library ✅ | 6 layouts, 7 families, registry, editor picker, fonts | every (family, format) renders in editor with real `PrFacts` — confirmed: 42 combinations across 26 test files (~170 tests), `/api/pr` per-IP limiter + cache sweep shipped |
 | 3 | Export real | storage drivers, `renderStill`, exports table + history UI, entitlements | Pro export lands in storage and in Recent exports |
 | 4 | Video | compositions for 8 clips, local + lambda, render_jobs, progress | MP4 renders locally and via Lambda |
 | 5 | Billing | Checkout, Portal, webhooks + idempotency, gating | test-mode subscription flips plan; replayed webhook is a no-op |
