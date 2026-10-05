@@ -19,7 +19,7 @@ const FACTS = { state: 'open' } as unknown as PrFacts;
 
 function fakeStore(seed?: Partial<PrCacheRow>) {
   const rows = new Map<string, PrCacheRow>();
-  const calls = { get: 0, touch: 0, put: 0 };
+  const calls = { get: 0, touch: 0, put: 0, sweep: 0 };
   if (seed) {
     const row: PrCacheRow = {
       repo: 'acme/review-pane', number: 4821, etag: 'W/"old"', state: 'open',
@@ -31,6 +31,7 @@ function fakeStore(seed?: Partial<PrCacheRow>) {
     async get(repo, number) { calls.get += 1; return rows.get(`${repo}#${number}`); },
     async touch() { calls.touch += 1; },
     async put(row) { calls.put += 1; rows.set(`${row.repo}#${row.number}`, row); },
+    async sweep() { calls.sweep += 1; return 0; },
   };
   return { store, calls, rows };
 }
@@ -89,10 +90,11 @@ describe('fetchPrFacts cache', () => {
   });
 
   it('records is_private from the pull payload', async () => {
-    const { store, rows } = fakeStore();
+    const { store, rows, calls } = fakeStore();
     const { client } = fakeGitHub({ private: true });
     await fetchPrFacts(REF, { token: 'gho_real', store, client });
     expect(rows.get('acme/review-pane#4821')?.isPrivate).toBe(true);
+    expect(calls.sweep).toBe(1);
   });
 
   it('a forced refresh sends no if-none-match', async () => {

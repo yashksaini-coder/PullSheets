@@ -2,11 +2,16 @@ import { Octokit } from '@octokit/rest';
 import { RequestError } from '@octokit/request-error';
 import { AppError, Forbidden, NotFound, RateLimited } from '@/lib/errors';
 
+export const GITHUB_TIMEOUT_MS = 10_000;
+
 export function githubClient(token: string | null) {
-  return new Octokit({ auth: token ?? undefined, userAgent: 'pullsheets/0.1', request: { timeout: 10_000 } });
+  return new Octokit({ auth: token ?? undefined, userAgent: 'pullsheets/0.1', request: { signal: AbortSignal.timeout(GITHUB_TIMEOUT_MS) } });
 }
 
 export function mapGitHubError(e: unknown): AppError {
+  if (e instanceof Error && (e.name === 'TimeoutError' || e.name === 'AbortError')) {
+    return new AppError(502, 'github_error', 'GitHub did not answer within 10 seconds');
+  }
   if (e instanceof RequestError) {
     const remaining = e.response?.headers?.['x-ratelimit-remaining'];
     const reset = e.response?.headers?.['x-ratelimit-reset'];

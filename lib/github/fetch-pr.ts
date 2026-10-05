@@ -1,6 +1,7 @@
 import { RequestError } from '@octokit/request-error';
 import type { PrFacts } from '@/components/cards/model';
 import { githubClient, mapGitHubError } from './client';
+import { maybeSweep } from './pr-cache-sweep';
 import { dbPrCacheStore, type PrCacheRow, type PrCacheStore } from './pr-cache-store';
 import { toPrFacts } from './to-pr-facts';
 import type { GhCheckRun, GhFile, GhPull, GhReview } from './types';
@@ -76,5 +77,6 @@ export async function fetchPrFacts(ref: PrRef, opts: FetchOpts): Promise<{ facts
   // and returns a real 500 instead of a misleading 502 github_error.
   const facts = toPrFacts({ pull, reviews, files, checkRuns: checks });
   await store.put({ repo: key(ref), number: ref.number, etag, state: facts.state, facts, isPrivate: pull.base.repo.private, fetchedAt: new Date() });
+  void maybeSweep(store);
   return { facts, cached: false, rateRemaining };
 }

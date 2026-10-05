@@ -40,4 +40,5 @@ describe('mapGitHubError', () => {
     const e = mapGitHubError(mk(403, {}, 'You have exceeded a secondary rate limit'));
     expect(e.status).toBe(429);
   });
+  it('maps an aborted request to 502 github_error', () => { const e = new Error('x'); e.name = 'TimeoutError'; expect(mapGitHubError(e).status).toBe(502); expect(mapGitHubError(e).message).toMatch(/10 seconds/); });
 });
