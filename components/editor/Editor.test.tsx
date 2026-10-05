@@ -64,13 +64,16 @@ describe('<Editor />', () => {
     expect(save(getByText).disabled).toBe(false);
   });
 
-  it('offers no unregistered card format: compact is disabled until phase 2', () => {
-    const { getByText } = render(
-      <Editor user={user} features={features} initialDesign={DEFAULT_DESIGN} initialFacts={SAMPLE_FACTS} />,
-    );
-    const compact = getByText('Compact') as HTMLOptionElement;
-    expect(compact.disabled).toBe(true);
-    expect(compact.title).toBe('Lands in phase 2');
+  it('offers all seven families as tiles and every format; switching family keeps a non-overridden format on the default layout', async () => {
+    const { getByLabelText, getByRole, container } = render(<Editor user={user} features={features} initialDesign={{ ...DEFAULT_DESIGN, cardFormat: 'digest' }} initialFacts={SAMPLE_FACTS} />);
+    for (const label of ['Midnight', 'Industrial', 'Modern', 'Minimal', 'Futuristic', 'Terminal', 'Editorial']) expect(getByLabelText(label)).toBeTruthy();
+    fireEvent.click(getByLabelText('Terminal'));
+    await waitFor(() => expect(container.querySelector('.pc-terminal.pc-digest')).toBeTruthy());
+    expect(container.querySelector('.pc-missing')).toBeNull();
+    const select = getByRole('combobox', { name: /format/i }) as HTMLSelectElement;
+    expect([...select.options].every((o) => !o.disabled)).toBe(true);
+    fireEvent.change(select, { target: { value: 'queue-row' } });
+    await waitFor(() => expect(container.querySelector('.pc-terminal.pc-queue-row')).toBeTruthy());
   });
 
   it('undoes a design change on ctrl/cmd+Z', () => {

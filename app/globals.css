@@ -205,3 +205,10 @@ textarea.input{height:auto;padding:10px 12px;line-height:1.5;resize:vertical}
 .round-go:hover{background:var(--primary-hover,#F26E52);box-shadow:var(--nav-cta-hover-shadow)}
 .round-go:active{transform:scale(.95)}
 @media (max-width:720px){.nav-links{display:none!important}.hide-sm{display:none!important}}
+
+/* editor — card picker (phase 2) */
+.card-families{display:grid;grid-template-columns:repeat(2,1fr);gap:6px}
+.card-family{display:flex;align-items:center;gap:8px;padding:6px;border-radius:8px;border:1px solid var(--fg-a10);background:var(--fg-a4);color:var(--foreground);cursor:pointer;text-align:left;font-size:12px}
+.card-family:hover{border-color:var(--fg-a25)}
+.card-family.is-on{border-color:var(--primary);box-shadow:0 0 0 1px var(--primary)}
+.card-family-swatch{display:inline-flex;align-items:center;justify-content:center;width:28px;height:22px;border-radius:5px;font:600 11px/1 var(--font-sans);box-shadow:inset 0 0 0 1px rgba(0,0,0,.15)}

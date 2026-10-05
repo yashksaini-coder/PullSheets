@@ -1,7 +1,7 @@
 'use client';
 import { Moon, Sun } from 'lucide-react';
 import { Input, Section, Segmented, Slider, Switch, Tile } from '@/components/ui';
-import { AVAILABLE_FAMILIES, CARD_FORMATS, resolveCard, type CardFamily, type CardFormat } from '@/components/cards';
+import { AVAILABLE_FAMILIES, CARD_FORMATS, FAMILY_META, resolveCard, type CardFormat } from '@/components/cards';
 import { SHADOWS, type ShadowKey } from '@/lib/data';
 import { useEditor } from '../EditorProvider';
 
@@ -34,10 +34,22 @@ export function CardPanel() {
       )}
 
       <Section title="Card">
-        <Segmented size="sm" value={d.cardFamily} onChange={(f: CardFamily) => update({ cardFamily: f })} options={AVAILABLE_FAMILIES.map((f) => ({ id: f, label: title(f) }))} />
+        <div className="card-families" role="radiogroup" aria-label="Card style">
+          {AVAILABLE_FAMILIES.map((f) => {
+            const m = FAMILY_META[f];
+            const on = d.cardFamily === f;
+            return (
+              <button key={f} type="button" role="radio" aria-checked={on} aria-label={m.label} title={m.blurb}
+                className={`card-family${on ? ' is-on' : ''}`} onClick={() => update({ cardFamily: f })}>
+                <span className="card-family-swatch" style={{ background: m.swatch, color: m.ink }} aria-hidden="true">Aa</span>
+                <span className="card-family-name">{m.label}</span>
+              </button>
+            );
+          })}
+        </div>
         <label className="label-sm" style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
           Format
-          <select className="select" value={resolveCard(d.cardFamily, d.cardFormat) ? d.cardFormat : 'standard'} onChange={(e) => update({ cardFormat: e.target.value as CardFormat })}>
+          <select className="select" aria-label="Format" value={resolveCard(d.cardFamily, d.cardFormat) ? d.cardFormat : 'standard'} onChange={(e) => update({ cardFormat: e.target.value as CardFormat })}>
             {CARD_FORMATS.map((f) => {
               // Unregistered layouts would render Card's pc-missing placeholder and be exportable.
               const off = resolveCard(d.cardFamily, f) === null;
