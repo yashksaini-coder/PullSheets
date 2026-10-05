@@ -6,7 +6,7 @@
   --pc-font: 'Chakra Petch', 'Inter', system-ui, sans-serif; --pc-mono: 'JetBrains Mono', ui-monospace, Menlo, monospace;
   --pc-title-weight: 600;
   position: relative; color: var(--pc-fg); font-family: var(--pc-font); border: 1px solid var(--pc-line); border-radius: 0;
-  background: var(--pc-bg) linear-gradient(rgba(0,229,255,.06) 1px, transparent 1px) 0 0/24px 24px, var(--pc-bg) linear-gradient(90deg, rgba(0,229,255,.06) 1px, transparent 1px) 0 0/24px 24px;
+  background: linear-gradient(rgba(0,229,255,.06) 1px, transparent 1px) 0 0/24px 24px, linear-gradient(90deg, rgba(0,229,255,.06) 1px, transparent 1px) 0 0/24px 24px;
   background-color: var(--pc-bg); box-shadow: 0 0 0 1px rgba(0,229,255,.08), 0 0 40px rgba(0,229,255,.08) inset;
 }
 .pc-bracket { position: absolute; width: 10px; height: 10px; border: 1px solid var(--pc-accent); pointer-events: none; }
@@ -22,6 +22,7 @@
 .pc-hud-ok { color: var(--pc-add); } .pc-hud-fail { color: var(--pc-fail); }
 .pc-ticks { display: inline-flex; gap: 2px; margin-left: auto; } .pc-tick { width: 5px; height: 8px; display: block; } .pc-tick-add { background: var(--pc-add); } .pc-tick-del { background: var(--pc-del); }
 .pc-hud-foot { display: flex; align-items: center; gap: 10px; padding-top: 10px; border-top: 1px solid var(--pc-line); font-size: 10.5px; letter-spacing: .08em; color: var(--pc-muted); }
+.pc-hud-author { max-width: 120px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .pc-hud-branch { font-family: var(--pc-mono); letter-spacing: 0; color: var(--pc-fg); flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .pc-hud-time { font-family: var(--pc-mono); letter-spacing: .04em; }
 .pc-futuristic .pc-avatar { border-radius: 0; background: var(--pc-track); color: var(--pc-accent); box-shadow: 0 0 0 1px var(--pc-line); }
