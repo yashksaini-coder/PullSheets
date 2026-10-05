@@ -1,0 +1,27 @@
+.pc-terminal {
+  --pc-bg: #060a06; --pc-fg: #8df0a0; --pc-muted: rgba(141,240,160,.7); --pc-faint: rgba(141,240,160,.45);
+  --pc-line: rgba(141,240,160,.35); --pc-accent: #8df0a0; --pc-track: rgba(141,240,160,.15);
+  --pc-add: #8df0a0; --pc-del: #ff8a65; --pc-wait: #ffc857; --pc-fail: #ff5c5c;
+  --pc-radius: 0px; --pc-pad: 16px 18px;
+  --pc-font: 'JetBrains Mono', ui-monospace, Menlo, monospace; --pc-mono: 'JetBrains Mono', ui-monospace, Menlo, monospace;
+  --pc-title-weight: 500;
+  background: var(--pc-bg); color: var(--pc-fg); font-family: var(--pc-mono); font-size: 12px; line-height: 1.65;
+  border: 1px solid var(--pc-line); border-radius: 0; box-shadow: none; gap: 0;
+  text-shadow: 0 0 6px rgba(141,240,160,.25);
+}
+.pc-term-prompt { display: flex; gap: 8px; } .pc-term-dollar { color: var(--pc-wait); }
+.pc-term-rule { color: var(--pc-faint); overflow: hidden; white-space: nowrap; }
+.pc-term-row { display: grid; grid-template-columns: 70px 1fr; gap: 0 10px; }
+.pc-term-key { color: var(--pc-faint); } .pc-term-inline { margin: 0 8px; }
+.pc-term-val { color: var(--pc-fg); overflow-wrap: anywhere; display: flex; flex-wrap: wrap; gap: 0 6px; }
+.pc-term-line { display: block; width: 100%; }
+.pc-term-dim { color: var(--pc-faint); } .pc-term-ok { color: var(--pc-add); } .pc-term-warn .pc-term-val { color: var(--pc-wait); }
+.pc-term-state-changes .pc-term-val, .pc-term-state-conflict .pc-term-val, .pc-term-rev-pending { color: var(--pc-wait); }
+.pc-term-state-checks-failed .pc-term-val, .pc-term-rev-changes { color: var(--pc-fail); }
+.pc-term-state-draft .pc-term-val, .pc-term-state-closed .pc-term-val { color: var(--pc-faint); }
+.pc-term-cursor { animation: pc-blink 1.1s steps(1) infinite; color: var(--pc-fg); }
+@keyframes pc-blink { 50% { opacity: 0; } }
+/* fallbacks for the other formats */
+.pc-terminal .pc-pill, .pc-terminal .pc-chip, .pc-terminal .pc-branches code, .pc-terminal .pc-label, .pc-terminal .pc-repo-tile, .pc-terminal .pc-panel, .pc-terminal .pc-avatar { border-radius: 0; }
+.pc-terminal .pc-foot { background: transparent; }
+.pc-terminal .pc-title { font-family: var(--pc-mono); }
