@@ -40,6 +40,15 @@ describe('every format renders', () => {
     const g = render(<Card family="midnight" format="digest" facts={SAMPLE_FACTS} />);
     expect(within(g.container).queryByText(SAMPLE_FACTS.body)).toBeNull(); // scoped: earlier renders in this test share document.body
   });
+  // jsdom computes no layout, so the ellipsis itself is only verifiable in a browser. What this
+  // can catch is the markup regressing: the age must stay its own node after the branch refs.
+  it('detail keeps the age beside a 128-char head ref', () => {
+    for (const format of ['detail', 'detail-wide'] as const) {
+      const { container, unmount } = render(<Card family="midnight" format={format} facts={LONG} />);
+      expect(within(container).getByText(/opened 2h ago/)).toBeTruthy();
+      unmount();
+    }
+  });
 });
 
 describe('consequenceLine', () => {

@@ -24,7 +24,7 @@ export function Digest({ facts, family }: { facts: PrFacts; family: CardFamily }
         <span className="pc-del">−{facts.diff.deletions.toLocaleString()}</span>
         <span className="pc-files">{facts.diff.files} files{share !== null && hottest ? ` · ${share}% in ${hottest.path.split('/').pop()}` : ''}</span>
       </div>
-      <div className="pc-people"><ReviewSegments items={facts.reviews.items} /><span className="pc-verdicts">{latest}</span></div>
+      <div className="pc-people"><ReviewSegments items={facts.reviews.items} /><span className="pc-digest-line">{latest}</span></div>
       <footer className="pc-foot">
         <RepoMark owner={facts.repo.owner} name={facts.repo.name} />
         <SnapshotStamp at={facts.snapshotAt} merged={facts.state === 'merged'} />

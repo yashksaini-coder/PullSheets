@@ -20,7 +20,7 @@ export function DetailBody({ facts, wide }: { facts: PrFacts; wide?: boolean }) 
         <span className="pc-dot">·</span>
         <code>{facts.head}</code> → <code>{facts.base}</code>
         <span className="pc-dot">·</span>
-        <span>{ageLine(facts)}</span>
+        <span className="pc-author-age">{ageLine(facts)}</span>
       </div>
       <div className={wide ? 'pc-detail-cols' : 'pc-detail-stack'}>
         <section className="pc-panel"><h3 className="pc-panel-title">Checks</h3><CheckList items={facts.checks.items} /></section>

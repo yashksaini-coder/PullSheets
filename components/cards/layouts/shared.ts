@@ -1,7 +1,7 @@
 import type { PrFacts, PrPerson } from '../model';
 import { relativeAge } from '../model';
 
-export const firstName = (p: PrPerson) => (p.name?.trim().split(/\s+/)[0] ?? p.login);
+export const firstName = (p: PrPerson) => (p.name?.trim().split(/\s+/)[0] || p.login);
 
 /** "Mira Kato" → "Mira K." — given name in full, the rest as initials. */
 export function shortName(p: PrPerson): string {

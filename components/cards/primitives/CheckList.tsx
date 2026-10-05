@@ -5,8 +5,8 @@ export function CheckList({ items, max = 4 }: { items: PrCheck[]; max?: number }
   const shown = items.slice(0, max);
   return (
     <ul className="pc-checklist">
-      {shown.map((c) => (
-        <li key={c.name} className={`pc-check pc-check-${c.status}`}>
+      {shown.map((c, i) => (
+        <li key={`${c.name}-${i}`} className={`pc-check pc-check-${c.status}`}>
           <span className="pc-check-dot" aria-hidden="true" />
           <span className="pc-check-name">{c.name}</span>
           <span className="pc-check-meta">{c.status === 'pending' ? 'running' : c.status === 'fail' ? 'failed' : fmt(c.durationSec)}</span>

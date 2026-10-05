@@ -63,7 +63,8 @@
 .pc-queue-row .pc-age { flex: none; width: 48px; text-align: right; }
 /* detail */
 .pc-author-line { display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--pc-muted); white-space: nowrap; overflow: hidden; }
-.pc-author-line code { font-family: var(--pc-mono); color: var(--pc-fg); }
+.pc-author-line code { font-family: var(--pc-mono); color: var(--pc-fg); max-width: 40%; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; display: inline-block; vertical-align: bottom; }
+.pc-author-age { flex: none; }
 .pc-dot { opacity: .6; }
 .pc-detail-stack { display: flex; flex-direction: column; gap: 10px; }
 .pc-detail-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
@@ -88,6 +89,7 @@
 .pc-segments { display: inline-flex; gap: 3px; }
 .pc-seg { width: 18px; height: 6px; border-radius: 2px; background: var(--pc-track); }
 .pc-seg-approved { background: var(--pc-add); } .pc-seg-changes { background: var(--pc-fail); } .pc-seg-pending { background: var(--pc-wait); } .pc-seg-commented { background: var(--pc-faint); }
+.pc-digest-line { flex: 1; min-width: 0; white-space: normal; overflow-wrap: anywhere; }
 /* long strings must never widen the frame */
-.pc-title, .pc-body, .pc-verdicts { overflow-wrap: anywhere; }
+.pc-title, .pc-body { overflow-wrap: anywhere; }
 .pc-branches code { max-width: 46%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; display: inline-block; vertical-align: bottom; }
