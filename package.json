@@ -33,6 +33,12 @@
     "db:studio": "drizzle-kit studio"
   },
   "dependencies": {
+    "@fontsource-variable/instrument-sans": "^5.3.0",
+    "@fontsource-variable/manrope": "^5.3.0",
+    "@fontsource-variable/newsreader": "^5.3.0",
+    "@fontsource/barlow": "^5.3.0",
+    "@fontsource/barlow-condensed": "^5.3.0",
+    "@fontsource/chakra-petch": "^5.3.0",
     "@octokit/request-error": "^7.1.2",
     "@octokit/rest": "^22.0.1",
     "@t3-oss/env-nextjs": "^0.13.11",
