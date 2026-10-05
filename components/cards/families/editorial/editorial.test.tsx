@@ -28,9 +28,7 @@ describe('editorial', () => {
     const dir = path.dirname(fileURLToPath(import.meta.url));
     const base = readFileSync(path.join(dir, '..', '..', 'base.css'), 'utf8');
     const tokens = readFileSync(path.join(dir, 'tokens.css'), 'utf8');
-    // jsdom's document, reached via globalThis so the cards-must-stay-pure lint rule
-    // (no bare `document`) doesn't flag this test-only cascade probe.
-    const doc = globalThis.document;
+    const doc = document;
     const style = doc.createElement('style');
     style.textContent = base + '\n' + tokens;
     doc.head.appendChild(style);

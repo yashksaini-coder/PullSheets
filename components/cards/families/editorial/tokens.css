@@ -2,12 +2,15 @@
   --pc-bg: #f7f1e3; --pc-fg: #1a1613; --pc-muted: rgba(26,22,19,.7); --pc-faint: rgba(26,22,19,.5);
   --pc-line: rgba(26,22,19,.55); --pc-accent: #6b1d2a; --pc-track: rgba(26,22,19,.12);
   --pc-add: #1a1613; --pc-del: #6b1d2a; --pc-wait: #7a5a12; --pc-fail: #6b1d2a;
-  --pc-radius: 0px; --pc-pad: 22px 24px 18px;
+  --pc-radius: 0px; --pc-pad: 24px;
   --pc-font: 'Newsreader Variable', Georgia, 'Times New Roman', serif; --pc-mono: 'JetBrains Mono', ui-monospace, Menlo, monospace;
   --pc-title-weight: 500;
   background: var(--pc-bg); color: var(--pc-fg); font-family: var(--pc-font);
-  border: 0; border-top: 3px double var(--pc-line); border-bottom: 1px solid var(--pc-line); border-radius: 0; box-shadow: none; gap: 10px;
+  border: 0; border-top: 3px double var(--pc-line); border-bottom: 1px solid var(--pc-line); border-radius: 0; box-shadow: none;
 }
+/* Format-scoped: the masthead's asymmetric padding belongs to the Editorial Standard layout.
+   Other formats keep var(--pc-pad), which .pc-foot negates to bleed to the card edge. */
+.pc-editorial.pc-standard { padding: 22px 24px 18px; }
 .pc-ed-dateline { display: flex; justify-content: space-between; font-variant: all-small-caps; letter-spacing: .08em; font-size: 13px; color: var(--pc-muted); }
 .pc-ed-headline { font-size: 24px; line-height: 1.15; letter-spacing: -0.01em; font-variation-settings: 'opsz' 24; }
 .pc-ed-body { font-size: 13.5px; line-height: 1.5; color: var(--pc-fg); -webkit-line-clamp: 4; }

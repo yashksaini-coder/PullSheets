@@ -1,3 +1,11 @@
+/* Shared card rules. cards.css loads this FIRST, then the seven family tokens.css files, so any
+   single-class family rule (.pc-<family>, .pc-<family> .pc-x) beats a per-format base rule
+   (.pc-compact, .pc-compact .pc-title) at equal specificity purely by source order.
+   Convention: a family may set tokens, colours, borders, radii and font-family freely on
+   .pc-<family>. Anything base.css sets PER FORMAT — gap, flex-direction, padding, .pc-title
+   font-size for Compact/Digest, .pc-stats / .pc-consequence display — may only be overridden
+   with a format-scoped compound selector (.pc-<family>.pc-standard ...). families.test.tsx
+   probes all 42 (family, format) pairs for exactly this. */
 .pc [data-k]::before { content: attr(data-k); display: none; }
 .pc { box-sizing: border-box; display: flex; flex-direction: column; gap: 10px; padding: var(--pc-pad); text-align: left; line-height: 1.35; font-size: 12px; overflow: hidden; }
 .pc *, .pc *::before, .pc *::after { box-sizing: inherit; }

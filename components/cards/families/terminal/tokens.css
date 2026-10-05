@@ -2,13 +2,16 @@
   --pc-bg: #060a06; --pc-fg: #8df0a0; --pc-muted: rgba(141,240,160,.7); --pc-faint: rgba(141,240,160,.45);
   --pc-line: rgba(141,240,160,.35); --pc-accent: #8df0a0; --pc-track: rgba(141,240,160,.15);
   --pc-add: #8df0a0; --pc-del: #ff8a65; --pc-wait: #ffc857; --pc-fail: #ff5c5c;
-  --pc-radius: 0px; --pc-pad: 16px 18px;
+  --pc-radius: 0px; --pc-pad: 18px;
   --pc-font: 'JetBrains Mono', ui-monospace, Menlo, monospace; --pc-mono: 'JetBrains Mono', ui-monospace, Menlo, monospace;
   --pc-title-weight: 500;
   background: var(--pc-bg); color: var(--pc-fg); font-family: var(--pc-mono); font-size: 12px; line-height: 1.65;
-  border: 1px solid var(--pc-line); border-radius: 0; box-shadow: none; gap: 0;
+  border: 1px solid var(--pc-line); border-radius: 0; box-shadow: none;
   text-shadow: 0 0 6px rgba(141,240,160,.25);
 }
+/* Structural, so format-scoped: the Terminal Standard layout rules its own line spacing and
+   runs tighter vertical padding. Every other format keeps base's gap and var(--pc-pad). */
+.pc-terminal.pc-standard { gap: 0; padding: 16px 18px; }
 .pc-term-prompt { display: flex; gap: 8px; } .pc-term-dollar { color: var(--pc-wait); }
 .pc-term-rule { color: var(--pc-faint); overflow: hidden; white-space: nowrap; }
 .pc-term-row { display: grid; grid-template-columns: 70px 1fr; gap: 0 10px; }

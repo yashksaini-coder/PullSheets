@@ -16,7 +16,9 @@
 .pc-hud-repo { color: var(--pc-muted); }
 .pc-hud-state { font-size: 11px; letter-spacing: .16em; color: var(--pc-add); }
 .pc-hud-state-changes, .pc-hud-state-conflict { color: var(--pc-wait); } .pc-hud-state-checks-failed { color: var(--pc-fail); } .pc-hud-state-merged { color: var(--pc-accent); } .pc-hud-state-draft, .pc-hud-state-closed { color: var(--pc-faint); }
-.pc-futuristic .pc-title { font-size: 16px; letter-spacing: 0; }
+.pc-futuristic .pc-title { letter-spacing: 0; }
+/* font-size is per-format in base.css (Compact 14px, Digest 18px), so scope ours to Standard. */
+.pc-futuristic.pc-standard .pc-title { font-size: 16px; }
 .pc-hud-grid { display: grid; grid-template-columns: 44px 1fr; gap: 6px 10px; margin: 0; font-size: 11px; }
 .pc-hud-grid dt { color: var(--pc-accent); letter-spacing: .14em; font-size: 10px; } .pc-hud-grid dd { margin: 0; display: flex; align-items: center; gap: 8px; font-family: var(--pc-mono); }
 .pc-hud-ok { color: var(--pc-add); } .pc-hud-fail { color: var(--pc-fail); }

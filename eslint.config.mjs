@@ -14,6 +14,12 @@ const config = [
       'no-restricted-globals': ['error', 'window', 'document', 'localStorage', 'sessionStorage', 'navigator', 'fetch', 'location'],
     },
   },
+  {
+    // The purity rule is about the shipped cards; the cascade probes are jsdom tests that have to
+    // reach `document` to compute styles. Imports stay restricted so a test can't drag next/ in.
+    files: ['components/cards/**/*.test.{ts,tsx}'],
+    rules: { 'no-restricted-globals': 'off' },
+  },
 ];
 
 export default config;

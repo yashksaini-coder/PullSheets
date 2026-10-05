@@ -9,7 +9,9 @@
   border: 1px solid var(--pc-line); border-radius: var(--pc-radius);
   box-shadow: 0 1px 2px rgba(17,24,39,.06), 0 12px 32px -12px rgba(17,24,39,.18);
 }
-.pc-modern .pc-title { font-size: 16px; letter-spacing: -0.02em; }
+.pc-modern .pc-title { letter-spacing: -0.02em; }
+/* font-size is per-format in base.css (Compact 14px, Digest 18px), so scope ours to Standard. */
+.pc-modern.pc-standard .pc-title { font-size: 16px; }
 .pc-modern .pc-pill { border: 0; padding: 3px 9px; background: color-mix(in srgb, currentColor 14%, transparent); }
 .pc-modern .pc-chip { background: color-mix(in srgb, var(--pc-accent) 12%, transparent); text-transform: none; letter-spacing: 0; font-weight: 600; }
 .pc-modern .pc-branches code { background: #f3f4f6; color: var(--pc-fg); }

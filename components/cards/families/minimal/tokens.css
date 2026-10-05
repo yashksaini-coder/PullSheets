@@ -6,8 +6,11 @@
   --pc-font: 'Instrument Sans Variable', 'Inter', system-ui, sans-serif; --pc-mono: 'JetBrains Mono', ui-monospace, Menlo, monospace;
   --pc-title-weight: 500;
   background: var(--pc-bg); color: var(--pc-fg); font-family: var(--pc-font);
-  border: 1px solid var(--pc-line); border-radius: var(--pc-radius); box-shadow: none; gap: 12px;
+  border: 1px solid var(--pc-line); border-radius: var(--pc-radius); box-shadow: none;
 }
+/* gap is per-format in base.css, so the airier 12px is scoped to the four roomy formats;
+   Compact (8px) and QueueRow (14px) keep the spacing their fixed geometry needs. */
+.pc-minimal.pc-standard, .pc-minimal.pc-detail, .pc-minimal.pc-digest, .pc-minimal.pc-detail-wide { gap: 12px; }
 /* no pills: a dot and a word */
 .pc-minimal .pc-pill { border: 0; padding: 0; text-transform: none; letter-spacing: 0; font-weight: 500; color: var(--pc-fg); gap: 7px; }
 .pc-minimal .pc-pill svg { display: none; }
@@ -25,4 +28,5 @@
 .pc-minimal .pc-stamp { font-family: var(--pc-font); letter-spacing: 0; font-variant-numeric: tabular-nums; }
 /* Labels only where the layout has room for a second line: Compact and QueueRow stay label-free. */
 .pc-minimal.pc-standard [data-k]::before, .pc-minimal.pc-digest [data-k]::before { display: block; font-variant: all-small-caps; letter-spacing: .06em; color: var(--pc-faint); font-family: var(--pc-font); font-weight: 400; }
-.pc-minimal .pc-stats > * { display: flex; flex-direction: column; }
+/* Same scope as the [data-k] labels above — the stacked cell only exists to hold one. */
+.pc-minimal.pc-standard .pc-stats > *, .pc-minimal.pc-digest .pc-stats > * { display: flex; flex-direction: column; }

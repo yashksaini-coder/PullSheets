@@ -12,7 +12,9 @@
 .pc-industrial::before, .pc-industrial::after { content: ''; position: absolute; width: 10px; height: 10px; pointer-events: none;
   background: linear-gradient(var(--pc-line), var(--pc-line)) center/100% 1px no-repeat, linear-gradient(var(--pc-line), var(--pc-line)) center/1px 100% no-repeat; }
 .pc-industrial::before { top: 6px; left: 6px; } .pc-industrial::after { right: 6px; bottom: 6px; }
-.pc-industrial .pc-title { font-family: 'Barlow Condensed', 'Barlow', sans-serif; font-size: 20px; letter-spacing: 0; text-transform: none; }
+.pc-industrial .pc-title { font-family: 'Barlow Condensed', 'Barlow', sans-serif; letter-spacing: 0; text-transform: none; }
+/* font-size is per-format in base.css (Compact 14px, Digest 18px), so scope ours to Standard. */
+.pc-industrial.pc-standard .pc-title { font-size: 20px; }
 .pc-industrial .pc-pill { border-radius: 0; border-width: 1px; }
 .pc-industrial .pc-chip { border-radius: 0; background: transparent; border: 1px solid var(--pc-accent); color: var(--pc-accent); }
 .pc-industrial .pc-branches code { border-radius: 0; background: transparent; border: 1px solid var(--pc-line); }
