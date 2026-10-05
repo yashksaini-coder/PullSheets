@@ -1,3 +1,4 @@
+import { randomUUID } from 'node:crypto';
 import { config } from 'dotenv';
 config({ path: '.env.local' });
 import { eq } from 'drizzle-orm';
@@ -8,7 +9,9 @@ const hasDb = Boolean(process.env.DATABASE_URL);
 describe.skipIf(!hasDb)('better-auth adapter persists githubLogin (needs Postgres)', async () => {
   const { auth, mapGitHubProfile } = await import('./index');
   const { db, schema } = await import('@/lib/db');
-  const email = `probe-${Date.now()}@example.invalid`;
+  // crypto.randomUUID, not Date.now() (1ms resolution): avoids a unique-email collision
+  // on users.email (lib/db/schema.ts:13) between parallel runs sharing one DATABASE_URL.
+  const email = `probe-${randomUUID()}@example.invalid`;
   afterAll(async () => { if (hasDb) await db.delete(schema.users).where(eq(schema.users.email, email)); });
 
   it('writes the mapped profile field through the internal adapter and reads it back', async () => {
