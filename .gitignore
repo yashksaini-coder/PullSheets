@@ -44,3 +44,6 @@ Thumbs.db
 .remember/
 .superpowers/
 .claude/*.local.*
+
+# original design prototypes — kept locally, removed from history (distilled copy lives in docs/design/)
+design-reference/

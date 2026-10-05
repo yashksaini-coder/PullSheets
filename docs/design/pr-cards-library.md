@@ -1,4 +1,4 @@
-# PR Cards — design library reference (distilled from design-reference/PullsheetsPRCards.dc.html)
+# PR Cards — design library reference (distilled from the original PR Cards design canvas, which is not kept in the repository)
 
 Source: `PR Cards - standalone.html` design canvas. Nocturne tokens apply to the *doc chrome*, not to the Pullsheets app. Each card family carries its own palette.
 

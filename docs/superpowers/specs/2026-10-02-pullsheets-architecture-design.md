@@ -1,7 +1,7 @@
 # Pullsheets — architecture design
 
 **Date:** 2026-10-02 · **Status:** approved in conversation, pending written review
-**Inputs:** `design-reference/*.dc.html` (app prototype, 4 routes) and `design-reference/PullsheetsPRCards.dc.html` (PR card component library; distilled in `docs/design/pr-cards-library.md`).
+**Inputs:** the Pullsheets Editor Design prototypes (landing, login, editor, account) and the PR Cards design-library canvas. The prototypes are kept out of the repository; the card library is distilled in `docs/design/pr-cards-library.md`.
 
 Pullsheets turns a GitHub pull request into a share-ready image or short clip for X, LinkedIn and Instagram.
 

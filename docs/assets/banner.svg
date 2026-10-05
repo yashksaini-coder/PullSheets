@@ -1,0 +1,98 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="400" viewBox="0 0 1280 400" role="img" aria-label="Pullsheets — pull requests, ready to post">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#171312"/>
+      <stop offset="1" stop-color="#0B0A0A"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0.22" cy="0.35" r="0.55">
+      <stop offset="0" stop-color="#E8452B" stop-opacity="0.55"/>
+      <stop offset="1" stop-color="#E8452B" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="glow2" cx="0.85" cy="0.9" r="0.5">
+      <stop offset="0" stop-color="#E8452B" stop-opacity="0.22"/>
+      <stop offset="1" stop-color="#E8452B" stop-opacity="0"/>
+    </radialGradient>
+    <pattern id="dots" width="22" height="22" patternUnits="userSpaceOnUse">
+      <circle cx="11" cy="11" r="1" fill="#E8E4E1" fill-opacity="0.12"/>
+    </pattern>
+    <linearGradient id="card" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#1C1E2E"/>
+      <stop offset="1" stop-color="#161826"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="160%">
+      <feDropShadow dx="0" dy="18" stdDeviation="18" flood-color="#000" flood-opacity="0.55"/>
+    </filter>
+    <style>
+      .sans { font-family: Inter, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+      .mono { font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+    </style>
+  </defs>
+
+  <rect width="1280" height="400" fill="url(#bg)"/>
+  <rect width="1280" height="400" fill="url(#dots)"/>
+  <rect width="1280" height="400" fill="url(#glow)"/>
+  <rect width="1280" height="400" fill="url(#glow2)"/>
+
+  <!-- brand mark -->
+  <g transform="translate(72,96)">
+    <rect width="64" height="64" rx="16" fill="#E8452B"/>
+    <g transform="translate(14,14)" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="27" cy="27" r="4.5"/>
+      <circle cx="9" cy="9" r="4.5"/>
+      <path d="M19.5 9h4.5a3 3 0 0 1 3 3v10.5"/>
+      <line x1="9" y1="13.5" x2="9" y2="31.5"/>
+    </g>
+  </g>
+
+  <!-- wordmark + tagline -->
+  <text x="156" y="138" class="sans" font-size="44" font-weight="700" letter-spacing="-1.2" fill="#F4F1EF">Pullsheets</text>
+  <text x="72" y="214" class="sans" font-size="34" font-weight="600" letter-spacing="-0.9" fill="#F4F1EF">Pull requests,</text>
+  <text x="72" y="256" class="sans" font-size="34" font-weight="600" letter-spacing="-0.9" fill="#E8452B">ready to post.</text>
+  <text x="72" y="300" class="sans" font-size="16" fill="#B7B0AB">Paste a GitHub PR link. Get a share-ready card for X, LinkedIn and Instagram.</text>
+  <text x="72" y="340" class="mono" font-size="12" letter-spacing="1.6" fill="#7A736F">NEXT.JS 15 · POSTGRES · BETTER-AUTH · REMOTION · MIT</text>
+
+  <!-- PR card (Midnight · Standard) -->
+  <g transform="translate(760,52) rotate(-3 210 150)" filter="url(#shadow)">
+    <rect width="420" height="296" rx="12" fill="url(#card)" stroke="#ffffff" stroke-opacity="0.09"/>
+    <!-- header -->
+    <rect x="18" y="18" width="52" height="18" rx="9" fill="none" stroke="#7FD09A" stroke-opacity="0.7"/>
+    <text x="44" y="31" text-anchor="middle" class="sans" font-size="9.5" font-weight="600" letter-spacing="0.6" fill="#7FD09A">OPEN</text>
+    <rect x="78" y="18" width="36" height="18" rx="5" fill="#9184D9" fill-opacity="0.18"/>
+    <text x="96" y="31" text-anchor="middle" class="sans" font-size="9.5" font-weight="600" letter-spacing="0.6" fill="#9184D9">FEAT</text>
+    <text x="124" y="31" class="mono" font-size="11" fill="#E9E9ED" fill-opacity="0.45">#4821</text>
+    <text x="402" y="31" text-anchor="end" class="sans" font-size="11" fill="#E9E9ED" fill-opacity="0.45">opened 2h ago</text>
+    <!-- title + body -->
+    <text x="18" y="66" class="sans" font-size="16" font-weight="500" letter-spacing="-0.2" fill="#E9E9ED">Stream diff hunks lazily in the review pane</text>
+    <text x="18" y="90" class="sans" font-size="12" fill="#E9E9ED" fill-opacity="0.55">Loads hunks on scroll instead of rendering the full diff up front.</text>
+    <text x="18" y="108" class="sans" font-size="12" fill="#E9E9ED" fill-opacity="0.55">Cuts initial paint on 1k+ line diffs from 3.2s to 400ms.</text>
+    <!-- branches -->
+    <rect x="18" y="124" width="104" height="18" rx="5" fill="#fff" fill-opacity="0.06"/>
+    <text x="70" y="137" text-anchor="middle" class="mono" font-size="10.5" fill="#E9E9ED">feat/lazy-hunks</text>
+    <text x="131" y="137" class="sans" font-size="12" fill="#E9E9ED" fill-opacity="0.55">→</text>
+    <rect x="146" y="124" width="40" height="18" rx="5" fill="#fff" fill-opacity="0.06"/>
+    <text x="166" y="137" text-anchor="middle" class="mono" font-size="10.5" fill="#E9E9ED">main</text>
+    <!-- change bar -->
+    <rect x="18" y="156" width="384" height="4" rx="2" fill="#3F424D"/>
+    <rect x="18" y="156" width="312" height="4" rx="2" fill="#6FBF86"/>
+    <rect x="330" y="156" width="72" height="4" rx="2" fill="#D86A5A"/>
+    <!-- stats -->
+    <text x="18" y="182" class="mono" font-size="11" font-weight="600" fill="#7FD09A">+183</text>
+    <text x="54" y="182" class="mono" font-size="11" font-weight="600" fill="#E07A6A">−42</text>
+    <text x="88" y="182" class="sans" font-size="11" fill="#E9E9ED" fill-opacity="0.55">12 files</text>
+    <text x="402" y="182" text-anchor="end" class="sans" font-size="11" fill="#7FD09A">checks 7/7</text>
+    <!-- people -->
+    <circle cx="29" cy="212" r="11" fill="#9184D9"/>
+    <text x="29" y="216" text-anchor="middle" class="sans" font-size="9" font-weight="700" fill="#fff">MK</text>
+    <circle cx="45" cy="212" r="11" fill="#7972A9" stroke="#161826" stroke-width="1.5"/>
+    <text x="45" y="216" text-anchor="middle" class="sans" font-size="9" font-weight="700" fill="#fff">AS</text>
+    <circle cx="61" cy="212" r="11" fill="#5C5783" stroke="#161826" stroke-width="1.5"/>
+    <text x="61" y="216" text-anchor="middle" class="sans" font-size="9" font-weight="700" fill="#fff">JT</text>
+    <text x="82" y="216" class="sans" font-size="11" fill="#E9E9ED" fill-opacity="0.55">Mira Kato · Aditi approved · Jonas waiting</text>
+    <!-- footer -->
+    <rect x="1" y="244" width="418" height="51" rx="0" fill="#fff" fill-opacity="0.025"/>
+    <line x1="1" y1="244" x2="419" y2="244" stroke="#fff" stroke-opacity="0.09"/>
+    <rect x="18" y="258" width="24" height="24" rx="6" fill="#fff" fill-opacity="0.06"/>
+    <text x="50" y="275" class="sans" font-size="11.5" fill="#E9E9ED"><tspan fill-opacity="0.55">acme /</tspan> review-pane</text>
+    <text x="402" y="275" text-anchor="end" class="mono" font-size="10" letter-spacing="0.5" fill="#E9E9ED" fill-opacity="0.45">SNAPSHOT · 15 SEP 2026</text>
+  </g>
+</svg>
