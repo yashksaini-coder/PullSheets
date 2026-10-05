@@ -1,20 +1,18 @@
 import type { CardFamily, PrFacts } from '../model';
-import { FRAME_WIDTH, relativeAge } from '../model';
+import { FRAME_WIDTH } from '../model';
 import { AvatarStack, ChangeBar, Checks, RepoMark, SnapshotStamp, StatusPill, TypeChip } from '../primitives';
+import { ageLine, firstName, peopleOf } from './shared';
 
 export function Standard({ facts, family }: { facts: PrFacts; family: CardFamily }) {
   const merged = facts.state === 'merged';
-  const now = new Date(facts.snapshotAt);
-  const age = relativeAge(new Date(merged && facts.timestamps.merged ? facts.timestamps.merged : facts.timestamps.opened), now);
-  const people = [facts.author, ...facts.reviews.items.map((r) => r.reviewer)];
-  const verdicts = facts.reviews.items.map((r) => `${r.reviewer.name?.split(' ')[0] ?? r.reviewer.login} ${r.verdict === 'approved' ? 'approved' : r.verdict === 'changes' ? 'requested changes' : 'waiting'}`);
+  const verdicts = facts.reviews.items.map((r) => `${firstName(r.reviewer)} ${r.verdict === 'approved' ? 'approved' : r.verdict === 'changes' ? 'requested changes' : 'waiting'}`);
   return (
     <article className={`pc pc-${family} pc-standard`} style={{ width: FRAME_WIDTH.standard }}>
       <header className="pc-head">
         <StatusPill state={facts.state} />
         <TypeChip type={facts.type} />
         <span className="pc-num">#{facts.number}</span>
-        <span className="pc-age">{merged ? 'merged' : 'opened'} {age}</span>
+        <span className="pc-age">{ageLine(facts)}</span>
       </header>
       <h2 className="pc-title">{facts.title}</h2>
       {facts.body && <p className="pc-body">{facts.body}</p>}
@@ -36,7 +34,7 @@ export function Standard({ facts, family }: { facts: PrFacts; family: CardFamily
         </div>
       )}
       <div className="pc-people">
-        <AvatarStack people={people} />
+        <AvatarStack people={peopleOf(facts)} />
         <span className="pc-verdicts">{[facts.author.name ?? facts.author.login, ...verdicts].join(' · ')}</span>
       </div>
       <footer className="pc-foot">

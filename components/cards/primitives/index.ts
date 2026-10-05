@@ -5,3 +5,6 @@ export { Avatar, AvatarStack } from './Avatar';
 export { RepoMark } from './RepoMark';
 export { SnapshotStamp } from './SnapshotStamp';
 export { Checks } from './Checks';
+export { CheckList } from './CheckList';
+export { FileHeat } from './FileHeat';
+export { ReviewSegments } from './ReviewSegments';

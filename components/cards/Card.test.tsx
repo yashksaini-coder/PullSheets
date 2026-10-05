@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 import { render } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
-import { Card, SAMPLE_FACTS } from './index';
+import { Card, SAMPLE_FACTS, type CardFormat } from './index';
 
 describe('Card', () => {
   it('renders Midnight Standard with the nine facts', () => {
@@ -17,7 +17,8 @@ describe('Card', () => {
     expect(getByText('SNAPSHOT · 15 SEP 2026')).toBeTruthy();
   });
   it('falls back to a visible placeholder for an unregistered format', () => {
-    const { getByText } = render(<Card family="midnight" format="compact" facts={SAMPLE_FACTS} />);
+    // Every CardFormat now resolves, so this probes the defensive branch with a format outside the union.
+    const { getByText } = render(<Card family="midnight" format={'gallery' as CardFormat} facts={SAMPLE_FACTS} />);
     expect(getByText(/not available yet/)).toBeTruthy();
   });
   it('shows MERGED in the stamp and the sha for merged PRs', () => {
