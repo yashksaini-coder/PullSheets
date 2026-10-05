@@ -11,6 +11,7 @@ import { GitHubIcon, LinkedInIcon, XIcon } from '@/components/brand-icons';
 import { SignInGitHub } from '@/components/auth/SignInGitHub';
 import { SignOutButton } from '@/components/auth/SignOutButton';
 import { RecentPrs } from '@/components/account/RecentPrs';
+import { relativeAge } from '@/components/cards';
 import { BACKGROUNDS, EXPORTS_KEY, bgCss, loadExports, type ExportItem } from '@/lib/data';
 import type { Features } from '@/lib/env';
 
@@ -262,7 +263,8 @@ function Exports({ all, toast, setConfirm, removeExport }: Ctx) {
             <div style={{ padding: '12px 14px', display: 'flex', flexDirection: 'column', gap: 8 }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}><StatusPill status={x.status} /><span className="mono muted" style={{ fontSize: 11, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{x.repo.split('/')[1]} #{x.number}</span></div>
               <div style={{ fontSize: 13, fontWeight: 500, lineHeight: 1.35 }}>{x.title}</div>
-              <span className="muted" style={{ fontSize: 11 }}>{x.platform} · {x.w}×{x.h} · {x.when}</span>
+              {/* Derived from the stored timestamp, so an export's age keeps up with the clock. */}
+              <span className="muted" style={{ fontSize: 11 }}>{x.platform} · {x.w}×{x.h} · {x.ts ? relativeAge(new Date(x.ts)) : x.when}</span>
               <div style={{ display: 'flex', gap: 4, borderTop: '1px solid var(--fg-a8)', paddingTop: 8 }}>
                 <Button variant="ghost" size="xs" href="/editor"><SlidersHorizontal size={12} />Open</Button>
                 <Button variant="ghost" size="icon-xs" aria-label="Download" onClick={() => notWired(toast, 'Download')}><Download size={13} /></Button>

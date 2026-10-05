@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import {
+  useCallback,
   useEffect,
   useState,
   type ButtonHTMLAttributes,
@@ -11,7 +12,7 @@ import {
   type RefObject,
 } from 'react';
 import { ChevronDown, X } from 'lucide-react';
-import type { PrState } from '@/components/cards/model';
+import { STATE_LABEL, type PrState } from '@/components/cards/model';
 
 /* ---------- Brand ---------- */
 
@@ -130,22 +131,16 @@ export function Kbd({ children }: { children: ReactNode }) {
 
 /* ---------- Display ---------- */
 
-const STATUS: Record<PrState, { label: string; color: string }> = {
-  open: { label: 'Open', color: '#1F9D4A' },
-  draft: { label: 'Draft', color: '#6B6560' },
-  approved: { label: 'Approved', color: '#1F9D4A' },
-  changes: { label: 'Changes', color: '#B7791F' },
-  'checks-failed': { label: 'Checks failed', color: '#C53030' },
-  conflict: { label: 'Conflict', color: '#B7791F' },
-  merged: { label: 'Merged', color: '#7C3AED' },
-  closed: { label: 'Closed', color: '#C53030' },
+// Colours only: the wording of a state lives in STATE_LABEL, so the pill and the cards cannot drift.
+const STATUS_COLOR: Record<PrState, string> = {
+  open: '#1F9D4A', draft: '#6B6560', approved: '#1F9D4A', changes: '#B7791F',
+  'checks-failed': '#C53030', conflict: '#B7791F', merged: '#7C3AED', closed: '#C53030',
 };
 
 export function StatusPill({ status }: { status: PrState }) {
-  const s = STATUS[status];
   return (
-    <span className="pill" style={{ background: s.color }}>
-      {s.label}
+    <span className="pill" style={{ background: STATUS_COLOR[status] }}>
+      {STATE_LABEL[status]}
     </span>
   );
 }
@@ -228,12 +223,13 @@ export interface Toast {
 
 export function useToasts() {
   const [toasts, setToasts] = useState<Toast[]>([]);
-  const dismiss = (id: number) => setToasts((t) => t.filter((x) => x.id !== id));
-  const toast = (t: Omit<Toast, 'id'>) => {
+  // Stable identities: callers put `toast` in effect dependency lists.
+  const dismiss = useCallback((id: number) => setToasts((t) => t.filter((x) => x.id !== id)), []);
+  const toast = useCallback((t: Omit<Toast, 'id'>) => {
     const id = Date.now() + Math.random();
     setToasts((l) => [...l, { ...t, id }]);
     setTimeout(() => dismiss(id), 3800);
-  };
+  }, [dismiss]);
   return { toasts, toast, dismiss };
 }
 

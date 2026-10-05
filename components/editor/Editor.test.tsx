@@ -64,6 +64,22 @@ describe('<Editor />', () => {
     expect(save(getByText).disabled).toBe(false);
   });
 
+  it('runs one import at a time: a second submit while the first is in flight sends no second request', async () => {
+    vi.mocked(fetch).mockClear();
+    const { getByLabelText, getByText } = render(
+      <Editor user={user} features={features} initialDesign={DEFAULT_DESIGN} initialFacts={null} />,
+    );
+    const input = getByLabelText('Pull request URL');
+    fireEvent.change(input, { target: { value: 'https://github.com/acme/review-pane/pull/4821' } });
+    const form = input.closest('form')!;
+    fireEvent.submit(form);
+    fireEvent.submit(form); // the impatient second click, before the first request has resolved
+    await waitFor(() => expect(getByText('Imported review-pane #4821')).toBeTruthy());
+    // /api/pr/recent is the panel's own call; only the import itself must be deduplicated.
+    const imports = vi.mocked(fetch).mock.calls.filter(([u]) => String(u).startsWith('/api/pr?'));
+    expect(imports).toHaveLength(1);
+  });
+
   it('offers all seven families as tiles and every format; switching family keeps a non-overridden format on the default layout', async () => {
     const { getByLabelText, getByRole, container } = render(<Editor user={user} features={features} initialDesign={{ ...DEFAULT_DESIGN, cardFormat: 'digest' }} initialFacts={SAMPLE_FACTS} />);
     for (const label of ['Midnight', 'Industrial', 'Modern', 'Minimal', 'Futuristic', 'Terminal', 'Editorial']) expect(getByLabelText(label)).toBeTruthy();

@@ -76,6 +76,9 @@ export async function fetchPrFacts(ref: PrRef, opts: FetchOpts): Promise<{ facts
   // Mapper/DB failures are ours, not GitHub's — let them propagate so withRoute logs them
   // and returns a real 500 instead of a misleading 502 github_error.
   const facts = toPrFacts({ pull, reviews, files, checkRuns: checks });
+  // GitHub computes mergeability asynchronously; an 'unknown' snapshot must not be cached as
+  // not-conflict. Serving it is fine — the next request recomputes it.
+  if (pull.mergeable_state === 'unknown') return { facts, cached: false, rateRemaining };
   await store.put({ repo: key(ref), number: ref.number, etag, state: facts.state, facts, isPrivate: pull.base.repo.private, fetchedAt: new Date() });
   void maybeSweep(store);
   return { facts, cached: false, rateRemaining };

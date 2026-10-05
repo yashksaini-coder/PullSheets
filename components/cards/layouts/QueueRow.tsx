@@ -14,7 +14,7 @@ export function QueueRow({ facts, family }: { facts: PrFacts; family: CardFamily
       </div>
       <div className="pc-row-change">
         <ChangeBar additions={facts.diff.additions} deletions={facts.diff.deletions} height={3} />
-        <span className="pc-stats"><span className="pc-add">+{facts.diff.additions.toLocaleString()}</span><span className="pc-del">−{facts.diff.deletions.toLocaleString()}</span></span>
+        <span className="pc-stats"><span className="pc-add" data-k="Change">+{facts.diff.additions.toLocaleString()}</span><span className="pc-del">−{facts.diff.deletions.toLocaleString()}</span></span>
       </div>
       <AvatarStack people={peopleOf(facts)} size={20} />
       <span className="pc-row-status"><StatusPill state={facts.state} /><span className="pc-consequence">{consequenceLine(facts)}</span></span>

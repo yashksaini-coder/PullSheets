@@ -23,5 +23,6 @@
 .pc-minimal .pc-foot { background: transparent; border-top: 1px solid var(--pc-line); }
 .pc-minimal .pc-repo-tile { display: none; }
 .pc-minimal .pc-stamp { font-family: var(--pc-font); letter-spacing: 0; font-variant-numeric: tabular-nums; }
-.pc-minimal [data-k]::before { display: block; font-variant: all-small-caps; letter-spacing: .06em; color: var(--pc-faint); font-family: var(--pc-font); font-weight: 400; }
+/* Labels only where the layout has room for a second line: Compact and QueueRow stay label-free. */
+.pc-minimal.pc-standard [data-k]::before, .pc-minimal.pc-digest [data-k]::before { display: block; font-variant: all-small-caps; letter-spacing: .06em; color: var(--pc-faint); font-family: var(--pc-font); font-weight: 400; }
 .pc-minimal .pc-stats > * { display: flex; flex-direction: column; }

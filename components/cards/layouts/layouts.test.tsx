@@ -40,6 +40,12 @@ describe('every format renders', () => {
     const g = render(<Card family="midnight" format="digest" facts={SAMPLE_FACTS} />);
     expect(within(g.container).queryByText(SAMPLE_FACTS.body)).toBeNull(); // scoped: earlier renders in this test share document.body
   });
+  // Label hooks: the industrial/minimal tokens key their field captions off data-k, so the
+  // smaller layouts have to carry the attribute even though only Standard/Digest show it.
+  it('compact labels its change figure', () => {
+    const { container } = render(<Card family="industrial" format="compact" facts={SAMPLE_FACTS} />);
+    expect(container.querySelector('.pc-add')?.getAttribute('data-k')).toBe('Change');
+  });
   // jsdom computes no layout, so the ellipsis itself is only verifiable in a browser. What this
   // can catch is the markup regressing: the age must stay its own node after the branch refs.
   it('detail keeps the age beside a 128-char head ref', () => {

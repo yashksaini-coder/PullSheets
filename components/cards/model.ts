@@ -47,7 +47,8 @@ export const STATE_LABEL: Record<PrState, string> = {
   conflict: 'Conflict', merged: 'Merged', closed: 'Closed',
 };
 
-const PREFIX = /^(feat|fix|hotfix|chore|build|ci|perf|refactor|style|test|docs|deps|release|revert)(\([^)]*\))?!?:/i;
+/** The one conventional-commit prefix pattern: classification here, title stripping in to-pr-facts. */
+export const CONVENTIONAL_PREFIX = /^(feat|fix|hotfix|chore|build|ci|perf|refactor|style|test|docs|deps|release|revert)(\([^)]*\))?!?:/i;
 const PREFIX_MAP: Record<string, PrType> = {
   feat: 'feat', fix: 'fix', hotfix: 'hotfix', chore: 'chore', build: 'chore', ci: 'chore', perf: 'fix', refactor: 'chore',
   style: 'chore', test: 'chore', docs: 'docs', deps: 'deps', release: 'release', revert: 'revert',
@@ -59,7 +60,7 @@ const LABEL_MAP: Record<string, PrType> = {
 
 export function inferPrType(i: { title: string; labels: string[]; headRef: string; authorLogin: string; isBot: boolean; filePaths: string[] }): PrType | null {
   if (/^revert\s+"/i.test(i.title)) return 'revert';
-  const m = PREFIX.exec(i.title.trim());
+  const m = CONVENTIONAL_PREFIX.exec(i.title.trim());
   if (m) return PREFIX_MAP[m[1].toLowerCase()];
   for (const l of i.labels) {
     const t = LABEL_MAP[l.toLowerCase()];

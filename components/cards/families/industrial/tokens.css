@@ -20,7 +20,8 @@
 .pc-industrial .pc-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; border: 1px solid var(--pc-line); font-size: 12px; }
 .pc-industrial .pc-stats > * { padding: 6px 8px; border-right: 1px solid var(--pc-line); margin: 0; display: flex; flex-direction: column; gap: 2px; }
 .pc-industrial .pc-stats > *:last-child { border-right: 0; }
-.pc-industrial [data-k]::before { display: block; font-size: 9px; letter-spacing: .08em; text-transform: uppercase; color: var(--pc-faint); font-family: var(--pc-font); font-weight: 500; }
+/* Labels only where the layout has room for a second line: Compact and QueueRow stay label-free. */
+.pc-industrial.pc-standard [data-k]::before, .pc-industrial.pc-digest [data-k]::before { display: block; font-size: 9px; letter-spacing: .08em; text-transform: uppercase; color: var(--pc-faint); font-family: var(--pc-font); font-weight: 500; }
 .pc-industrial .pc-foot { background: transparent; border-top: 1px solid var(--pc-line); }
 .pc-industrial .pc-stamp { color: var(--pc-fg); }
 .pc-industrial .pc-avatar { border-radius: 0; background: var(--pc-accent); box-shadow: 0 0 0 1.5px var(--pc-bg); }

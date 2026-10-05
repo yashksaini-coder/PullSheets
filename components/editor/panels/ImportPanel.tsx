@@ -12,19 +12,32 @@ const STATE_ICON: Partial<Record<PrState, typeof GitPullRequest>> = {
 };
 
 export function ImportPanel() {
-  const { facts } = useEditor();
+  const { facts, toast } = useEditor();
   const { importUrl, importRef, fetching } = useImportPr();
   const [prUrl, setPrUrl] = useState('');
   const [recent, setRecent] = useState<RecentPr[]>([]);
 
   useEffect(() => {
     let live = true;
-    fetch('/api/pr/recent')
-      .then((r) => (r.ok ? (r.json() as Promise<RecentPr[]>) : []))
-      .then((rows) => { if (live) setRecent(rows); })
-      .catch(() => {});
+    (async () => {
+      let res: Response;
+      try {
+        res = await fetch('/api/pr/recent');
+      } catch {
+        return; // offline: the editor still works, and the import field says so when it is used
+      }
+      if (!res.ok) {
+        // 401 is the normal answer for a session without a GitHub token — nothing went wrong.
+        if (res.status === 401) return;
+        const body = (await res.json().catch(() => ({}))) as { error?: string };
+        if (live) toast({ type: 'error', title: 'Could not load recent pull requests', description: body.error });
+        return;
+      }
+      const rows = (await res.json().catch(() => [])) as RecentPr[];
+      if (live) setRecent(rows);
+    })();
     return () => { live = false; };
-  }, []);
+  }, [toast]);
 
   return (
     <Section title="Pull request">

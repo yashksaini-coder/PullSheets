@@ -23,7 +23,7 @@
 .pc-add { color: var(--pc-add); } .pc-del { color: var(--pc-del); }
 .pc-files { color: var(--pc-muted); font-family: var(--pc-font); font-weight: 400; }
 .pc-checks { margin-left: auto; font-family: var(--pc-font); font-weight: 400; color: var(--pc-muted); }
-.pc-checks-ok { color: var(--pc-add); } .pc-checks-bad { color: var(--pc-fail); }
+.pc-checks-ok { color: var(--pc-add); } .pc-checks-bad { color: var(--pc-fail); } .pc-checks-none { color: var(--pc-faint); }
 .pc-labels { display: flex; gap: 6px; flex-wrap: wrap; }
 .pc-label { font-size: 10.5px; padding: 1px 7px; border-radius: 99px; border: 1px solid var(--pc-line); color: var(--pc-muted); }
 .pc-people { display: flex; align-items: center; gap: 10px; font-size: 11px; color: var(--pc-muted); }

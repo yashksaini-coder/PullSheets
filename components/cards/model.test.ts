@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { FRAME_WIDTH, formatSnapshot, inferPrType, relativeAge } from './model';
+import { FRAME_WIDTH, formatSnapshot, inferPrType, initials, relativeAge } from './model';
 
 const base = { labels: [] as string[], headRef: 'feat/x', authorLogin: 'mira', isBot: false, filePaths: ['src/a.ts'] };
 
@@ -52,6 +52,22 @@ describe('relativeAge', () => {
 describe('formatSnapshot', () => {
   it('is DD MON YYYY uppercase', () => {
     expect(formatSnapshot(new Date('2026-09-15T14:32:00Z'))).toBe('15 SEP 2026');
+  });
+});
+
+describe('initials', () => {
+  const p = (name: string | null, login: string) => ({ name, login, avatarUrl: null, isBot: false });
+  it('takes the first letter of the first two words of a name', () => {
+    expect(initials(p('Mira Kato', 'mkato'))).toBe('MK');
+  });
+  it('falls back to the login when there is no name', () => {
+    expect(initials(p(null, 'mkato'))).toBe('MK');
+  });
+  it('drops the [bot] suffix', () => {
+    expect(initials(p(null, 'dependabot[bot]'))).toBe('DE');
+  });
+  it('uses the first two letters of a single-word name', () => {
+    expect(initials(p('Prince', 'prince'))).toBe('PR');
   });
 });
 

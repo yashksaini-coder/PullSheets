@@ -1,8 +1,9 @@
 import type { PrCheck, PrFacts, PrPerson, PrReview, PrState } from '@/components/cards/model';
-import { inferPrType } from '@/components/cards/model';
+import { CONVENTIONAL_PREFIX, inferPrType } from '@/components/cards/model';
 import type { GhCheckRun, GhFile, GhPull, GhReview, GhUser } from './types';
 
-const PREFIX = /^(feat|fix|hotfix|chore|build|ci|perf|refactor|style|test|docs|deps|release|revert)(\([^)]*\))?!?:\s*/i;
+// Same pattern that classifies the type, extended to eat the separator space when stripping a title.
+const PREFIX_STRIP = new RegExp(CONVENTIONAL_PREFIX.source + '\\s*', 'i');
 
 const person = (u: GhUser): PrPerson => ({ login: u.login, name: u.name ?? null, avatarUrl: u.avatar_url ?? null, isBot: u.type === 'Bot' || /\[bot\]$/.test(u.login) });
 
@@ -53,7 +54,7 @@ export function toPrFacts(i: { pull: GhPull; reviews: GhReview[]; files: GhFile[
   return {
     repo: { owner: p.base.repo.owner.login, name: p.base.repo.name },
     number: p.number,
-    title: p.title.replace(PREFIX, '').trim(),
+    title: p.title.replace(PREFIX_STRIP, '').trim(),
     body: (p.body ?? '').replace(/\s+/g, ' ').trim(),
     state: deriveState(p, reviews, ck),
     type: inferPrType({ title: p.title, labels, headRef: p.head.ref, authorLogin: author.login, isBot: author.isBot, filePaths: i.files.map((f) => f.filename) }),

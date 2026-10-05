@@ -50,10 +50,11 @@ export function ExportMenu({ stageRef, onNeedMotion }: { stageRef: RefObject<HTM
         return;
       }
     }
+    // `when` is derived from `ts` at render time; writing a frozen "Just now" would age into a lie.
     saveExport({
       id: Date.now(), title: f.title, repo: `${f.repo.owner}/${f.repo.name}`, number: f.number, status: f.state,
       platform: a.label, w: a.w * exportScale, h: a.h * exportScale, format: fmt.toUpperCase(), scale: exportScale,
-      bg: d.bg === 'custom' ? d.customColor : d.bg, kind: 'image', dur: 0, when: 'Just now', ts: Date.now(),
+      bg: d.bg === 'custom' ? d.customColor : d.bg, kind: 'image', dur: 0, when: '', ts: Date.now(),
     });
     toast({ type: 'success', title: `Exported ${fmt.toUpperCase()} · ${a.w * exportScale}×${a.h * exportScale}`, description: 'Saved to Recent exports', actionLabel: 'Open', onAction: () => router.push('/account#exports') });
   };

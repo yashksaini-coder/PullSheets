@@ -20,9 +20,9 @@ export function Digest({ facts, family }: { facts: PrFacts; family: CardFamily }
       </div>
       <ChangeBar additions={facts.diff.additions} deletions={facts.diff.deletions} height={6} />
       <div className="pc-stats">
-        <span className="pc-add">+{facts.diff.additions.toLocaleString()}</span>
+        <span className="pc-add" data-k="Change">+{facts.diff.additions.toLocaleString()}</span>
         <span className="pc-del">−{facts.diff.deletions.toLocaleString()}</span>
-        <span className="pc-files">{facts.diff.files} files{share !== null && hottest ? ` · ${share}% in ${hottest.path.split('/').pop()}` : ''}</span>
+        <span className="pc-files" data-k="Files">{facts.diff.files} files{share !== null && hottest ? ` · ${share}% in ${hottest.path.split('/').pop()}` : ''}</span>
       </div>
       <div className="pc-people"><ReviewSegments items={facts.reviews.items} /><span className="pc-digest-line">{latest}</span></div>
       <footer className="pc-foot">

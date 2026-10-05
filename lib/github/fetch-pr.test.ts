@@ -37,10 +37,11 @@ function fakeStore(seed?: Partial<PrCacheRow>) {
 }
 
 /** Minimal octokit stand-in: records the headers the pull request was fetched with. */
-function fakeGitHub(opts: { pull?: 304 | 404; checks?: 429; private?: boolean } = {}) {
+function fakeGitHub(opts: { pull?: 304 | 404; checks?: 429; private?: boolean; mergeableState?: string } = {}) {
   const seen: { pullCalls: number; headers?: Record<string, string> } = { pullCalls: 0 };
   const pull = { ...(fixture.pull as unknown as GhPull) };
   pull.base = { ...pull.base, repo: { ...pull.base.repo, private: opts.private ?? false } };
+  if (opts.mergeableState) pull.mergeable_state = opts.mergeableState as GhPull['mergeable_state'];
   const client = {
     rest: {
       pulls: {
@@ -103,6 +104,15 @@ describe('fetchPrFacts cache', () => {
     const res = await fetchPrFacts(REF, { token: null, store, client, force: true });
     expect(res.cached).toBe(false);
     expect(seen.headers).toEqual({});
+  });
+
+  it('does not cache a pull whose mergeability GitHub is still computing', async () => {
+    const { store, calls } = fakeStore();
+    const { client } = fakeGitHub({ mergeableState: 'unknown' });
+    const res = await fetchPrFacts(REF, { token: 'gho_real', store, client });
+    expect(res.cached).toBe(false);
+    expect(res.facts.state).not.toBe('conflict'); // served, but never written down as a fact
+    expect(calls.put).toBe(0);
   });
 
   it('propagates a check-runs 429 as rate_limited and writes nothing', async () => {

@@ -14,7 +14,7 @@ export function Compact({ facts, family }: { facts: PrFacts; family: CardFamily 
       <h2 className="pc-title">{facts.title}</h2>
       <ChangeBar additions={facts.diff.additions} deletions={facts.diff.deletions} />
       <div className="pc-stats">
-        <span className="pc-add">+{facts.diff.additions.toLocaleString()}</span>
+        <span className="pc-add" data-k="Change">+{facts.diff.additions.toLocaleString()}</span>
         <span className="pc-del">−{facts.diff.deletions.toLocaleString()}</span>
         <span className="pc-consequence">{consequenceLine(facts)}</span>
       </div>

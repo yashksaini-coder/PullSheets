@@ -14,6 +14,8 @@ interface Ctx {
   undo: () => void; redo: () => void; reset: () => void;
   canUndo: boolean; canRedo: boolean;
   facts: PrFacts | null; setFacts: (f: PrFacts | null) => void;
+  /** One import at a time: every panel that can start one reads the same flag. */
+  fetching: boolean; setFetching: (v: boolean) => void;
   user: EditorUser; features: Features;
   toasts: Toast[]; toast: ReturnType<typeof useToasts>['toast']; dismiss: (id: number) => void;
 }
@@ -22,6 +24,7 @@ const EditorCtx = createContext<Ctx | null>(null);
 export function EditorProvider({ initialDesign, initialFacts, user, features, children }: { initialDesign: Design; initialFacts: PrFacts | null; user: EditorUser; features: Features; children: ReactNode }) {
   const [s, dispatch] = useReducer(editorReducer, initialDesign, initialEditorState);
   const [facts, setFacts] = useState<PrFacts | null>(initialFacts);
+  const [fetching, setFetching] = useState(false);
   const { toasts, toast, dismiss } = useToasts();
   const update = useCallback((patch: Partial<Design>) => dispatch({ type: 'patch', patch }), []);
   const undo = useCallback(() => dispatch({ type: 'undo' }), []);
@@ -38,8 +41,8 @@ export function EditorProvider({ initialDesign, initialFacts, user, features, ch
 
   const value = useMemo<Ctx>(() => ({
     d: s.design, update, undo, redo, reset, canUndo: s.past.length > 0, canRedo: s.future.length > 0,
-    facts, setFacts, user, features, toasts, toast, dismiss,
-  }), [s, update, undo, redo, reset, facts, user, features, toasts, toast, dismiss]);
+    facts, setFacts, fetching, setFetching, user, features, toasts, toast, dismiss,
+  }), [s, update, undo, redo, reset, facts, fetching, user, features, toasts, toast, dismiss]);
   return <EditorCtx.Provider value={value}>{children}</EditorCtx.Provider>;
 }
 

@@ -27,7 +27,7 @@ export function Toolbar({ stageRef, rulers, setRulers, grid, setGrid, onStartOve
       <div className="ed-group" style={{ gap: 10, minWidth: 0 }}>
         <Logo href="/" small />
         <span className="divider-v" />
-        <Button variant="ghost" size="sm"><WandSparkles size={14} />Templates</Button>
+        <Button variant="ghost" size="sm" disabled title="Coming in a later phase"><WandSparkles size={14} />Templates</Button>
       </div>
 
       <div className="ed-group" style={{ gap: 10 }}>
@@ -56,7 +56,7 @@ export function Toolbar({ stageRef, rulers, setRulers, grid, setGrid, onStartOve
       </div>
 
       <div className="ed-group" style={{ justifySelf: 'end' }}>
-        <Button variant="ghost" size="sm"><MessageSquare size={14} />Feedback</Button>
+        <Button variant="ghost" size="sm" disabled title="Coming in a later phase"><MessageSquare size={14} />Feedback</Button>
         <Button variant="ghost" size="sm" href="/account#exports"><Clock size={14} />Exports</Button>
         <span className="divider-v" style={{ margin: '0 4px' }} />
         <div ref={menuRef} style={{ position: 'relative' }}>
