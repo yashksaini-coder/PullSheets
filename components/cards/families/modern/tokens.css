@@ -1,0 +1,20 @@
+.pc-modern {
+  --pc-bg: #ffffff; --pc-fg: #111827; --pc-muted: #6b7280; --pc-faint: #9ca3af;
+  --pc-line: oklch(0.92 0.005 260); --pc-accent: #6366f1; --pc-track: #e5e7eb;
+  --pc-add: #16a34a; --pc-del: #dc2626; --pc-wait: #d97706; --pc-fail: #dc2626;
+  --pc-radius: 14px; --pc-pad: 20px;
+  --pc-font: 'Manrope Variable', 'Inter', system-ui, sans-serif; --pc-mono: 'JetBrains Mono', ui-monospace, Menlo, monospace;
+  --pc-title-weight: 700;
+  background: var(--pc-bg); color: var(--pc-fg); font-family: var(--pc-font);
+  border: 1px solid var(--pc-line); border-radius: var(--pc-radius);
+  box-shadow: 0 1px 2px rgba(17,24,39,.06), 0 12px 32px -12px rgba(17,24,39,.18);
+}
+.pc-modern .pc-title { font-size: 16px; letter-spacing: -0.02em; }
+.pc-modern .pc-pill { border: 0; padding: 3px 9px; background: color-mix(in srgb, currentColor 14%, transparent); }
+.pc-modern .pc-chip { background: color-mix(in srgb, var(--pc-accent) 12%, transparent); text-transform: none; letter-spacing: 0; font-weight: 600; }
+.pc-modern .pc-branches code { background: #f3f4f6; color: var(--pc-fg); }
+.pc-modern .pc-avatar { box-shadow: 0 0 0 2px var(--pc-bg), 0 0 0 3px var(--pc-line); }
+.pc-modern .pc-foot { background: #f9fafb; }
+.pc-modern .pc-repo-tile { background: #f3f4f6; }
+.pc-modern .pc-label { background: #f3f4f6; border-color: transparent; color: var(--pc-muted); }
+.pc-modern .pc-bar { height: 6px; }

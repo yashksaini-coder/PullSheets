@@ -14,7 +14,7 @@ export const LAYOUTS: Record<CardFormat, CardComponent> = {
   'queue-row': QueueRow, compact: Compact, standard: Standard, detail: Detail, digest: Digest, 'detail-wide': DetailWide,
 };
 export const FAMILY_OVERRIDES: Partial<Record<CardFamily, Partial<Record<CardFormat, CardComponent>>>> = {};
-export const AVAILABLE_FAMILIES: CardFamily[] = ['midnight'];
+export const AVAILABLE_FAMILIES: CardFamily[] = ['midnight', 'industrial', 'modern', 'minimal'];
 
 /** Every CardFormat now resolves; the `| null` stays for the editor's picker, which probes unknown formats. */
 export function resolveCard(family: CardFamily, format: CardFormat): CardComponent | null {

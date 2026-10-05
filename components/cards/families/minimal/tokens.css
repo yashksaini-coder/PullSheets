@@ -1,0 +1,27 @@
+.pc-minimal {
+  --pc-bg: #ffffff; --pc-fg: #111111; --pc-muted: #555555; --pc-faint: #8a8a8a;
+  --pc-line: #e6e6e6; --pc-accent: #111111; --pc-track: #e6e6e6;
+  --pc-add: #111111; --pc-del: #8a8a8a; --pc-wait: #555555; --pc-fail: #111111;
+  --pc-radius: 2px; --pc-pad: 20px;
+  --pc-font: 'Instrument Sans Variable', 'Inter', system-ui, sans-serif; --pc-mono: 'JetBrains Mono', ui-monospace, Menlo, monospace;
+  --pc-title-weight: 500;
+  background: var(--pc-bg); color: var(--pc-fg); font-family: var(--pc-font);
+  border: 1px solid var(--pc-line); border-radius: var(--pc-radius); box-shadow: none; gap: 12px;
+}
+/* no pills: a dot and a word */
+.pc-minimal .pc-pill { border: 0; padding: 0; text-transform: none; letter-spacing: 0; font-weight: 500; color: var(--pc-fg); gap: 7px; }
+.pc-minimal .pc-pill svg { display: none; }
+.pc-minimal .pc-pill::before { content: ''; width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
+.pc-minimal .pc-pill-draft::before, .pc-minimal .pc-pill-closed::before { background: var(--pc-faint); }
+.pc-minimal .pc-chip { background: transparent; color: var(--pc-muted); font-variant: all-small-caps; letter-spacing: .06em; padding: 0; text-transform: none; font-size: 12px; }
+.pc-minimal .pc-branches code { background: transparent; padding: 0; color: var(--pc-fg); }
+.pc-minimal .pc-labels { display: none; }
+.pc-minimal .pc-stats { font-weight: 500; }
+.pc-minimal .pc-checks-ok, .pc-minimal .pc-checks-bad { color: var(--pc-fg); }
+.pc-minimal .pc-avatars { display: none; }
+.pc-minimal .pc-verdicts { white-space: normal; }
+.pc-minimal .pc-foot { background: transparent; border-top: 1px solid var(--pc-line); }
+.pc-minimal .pc-repo-tile { display: none; }
+.pc-minimal .pc-stamp { font-family: var(--pc-font); letter-spacing: 0; font-variant-numeric: tabular-nums; }
+.pc-minimal [data-k]::before { display: block; font-variant: all-small-caps; letter-spacing: .06em; color: var(--pc-faint); font-family: var(--pc-font); font-weight: 400; }
+.pc-minimal .pc-stats > * { display: flex; flex-direction: column; }

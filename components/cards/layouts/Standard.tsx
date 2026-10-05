@@ -22,9 +22,9 @@ export function Standard({ facts, family }: { facts: PrFacts; family: CardFamily
       </div>
       <ChangeBar additions={facts.diff.additions} deletions={facts.diff.deletions} />
       <div className="pc-stats">
-        <span className="pc-add">+{facts.diff.additions.toLocaleString()}</span>
+        <span className="pc-add" data-k="Change">+{facts.diff.additions.toLocaleString()}</span>
         <span className="pc-del">−{facts.diff.deletions.toLocaleString()}</span>
-        <span className="pc-files">{facts.diff.files} files</span>
+        <span className="pc-files" data-k="Files">{facts.diff.files} files</span>
         <Checks passed={facts.checks.passed} total={facts.checks.total} />
       </div>
       {facts.labels.length > 0 && (

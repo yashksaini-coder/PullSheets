@@ -9,6 +9,14 @@ import '@/styles/tokens/shadows.css';
 import '@/styles/tokens/motion.css';
 import '@/styles/tokens/base.css';
 import './globals.css';
+import '@fontsource/barlow/400.css';
+import '@fontsource/barlow/500.css';
+import '@fontsource/barlow-condensed/600.css';
+import '@fontsource-variable/manrope';
+import '@fontsource-variable/instrument-sans';
+import '@fontsource/chakra-petch/400.css';
+import '@fontsource/chakra-petch/600.css';
+import '@fontsource-variable/newsreader';
 import '@/components/cards/cards.css';
 
 export const metadata: Metadata = {
