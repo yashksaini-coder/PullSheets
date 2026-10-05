@@ -42,7 +42,10 @@ describe('TokenBucket', () => {
 
 describe('clientIp', () => {
   const mk = (h: Record<string, string>) => new Request('http://x', { headers: h });
-  it('takes the first x-forwarded-for hop', () => { expect(clientIp(mk({ 'x-forwarded-for': '203.0.113.9, 10.0.0.1' }))).toBe('203.0.113.9'); });
+  it('takes the last x-forwarded-for hop', () => { expect(clientIp(mk({ 'x-forwarded-for': '203.0.113.9, 10.0.0.1' }))).toBe('10.0.0.1'); });
+  // Cloudflare and nginx's proxy_add_x_forwarded_for APPEND, so only the last hop is ours: a
+  // client-supplied first hop must not change the key, or the limiter is a no-op.
+  it('ignores a client-supplied first hop', () => { expect(clientIp(mk({ 'x-forwarded-for': '1.1.1.1, 203.0.113.9' }))).toBe('203.0.113.9'); });
   it('falls back to x-real-ip then local', () => {
     expect(clientIp(mk({ 'x-real-ip': '198.51.100.2' }))).toBe('198.51.100.2');
     expect(clientIp(mk({}))).toBe('local');

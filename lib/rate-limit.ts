@@ -56,11 +56,14 @@ export class TokenBucket {
 /** Anonymous `/api/pr`: 30 requests per 10 minutes per client. */
 export const anonymousPrLimiter = new TokenBucket({ capacity: 30, refillPerMs: 30 / (10 * 60 * 1000) });
 
-// ponytail: trusts the first x-forwarded-for hop. Only sound behind a proxy that overwrites XFF
-// (Vercel, Cloudflare, nginx with real_ip). A direct-exposed deploy must put one in front or this
-// limiter is bypassable by sending a random XFF per request.
+// ponytail: trusts the LAST x-forwarded-for hop — the one appended by your single trusted proxy
+// (Vercel, Cloudflare, nginx real_ip). Direct-exposed deploys are bypassable; multiple proxy
+// layers need a hop-count knob (phase 7).
 export function clientIp(req: Request): string {
   const xff = req.headers.get('x-forwarded-for');
-  if (xff) return xff.split(',')[0].trim();
+  if (xff) {
+    const hops = xff.split(',').map((s) => s.trim()).filter(Boolean);
+    if (hops.length) return hops[hops.length - 1];
+  }
   return req.headers.get('x-real-ip')?.trim() || 'local';
 }

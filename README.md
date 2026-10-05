@@ -166,7 +166,7 @@ docs/
 - Private PRs are never served from the cache TTL; importing one costs a (conditional) GitHub call every time.
 - Video export, server-side renders, billing and social posting are phases 3–6; their controls say so rather than pretending.
 - Card truncation for very long branch names and paths is CSS-only and verified in the browser, not in the test suite.
-- **Deployment notes:** the anonymous `/api/pr` rate limit trusts the first `x-forwarded-for` hop, which is only safe behind a proxy that overwrites that header (Vercel, Cloudflare, nginx with `real_ip`) — a direct-exposed deploy needs one in front of it, or the limit is bypassable with a spoofed header.
+- **Deployment notes:** the anonymous `/api/pr` rate limit trusts the **last** `x-forwarded-for` hop — the one appended by your single trusted proxy (Vercel, Cloudflare, nginx `real_ip`). A direct-exposed deploy is bypassable with a spoofed header and needs a proxy in front of it; more than one proxy layer needs a hop-count knob (phase 7).
 
 ## Roadmap
 
