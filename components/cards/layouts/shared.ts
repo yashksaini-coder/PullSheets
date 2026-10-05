@@ -46,6 +46,27 @@ export function consequenceLine(f: PrFacts): string {
   }
 }
 
+const WORDS = ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten', 'eleven', 'twelve'];
+const word = (n: number) => (n >= 0 && n < WORDS.length ? WORDS[n] : String(n));
+const cap = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
+
+/** The Editorial card's "Figures." paragraph — change size, verdict and conflict state in one newspaper-style sentence. */
+export function figuresSentence(f: PrFacts): string {
+  const parts: string[] = [];
+  if (f.diff.additions + f.diff.deletions === 0) parts.push('No lines changed.');
+  else {
+    const files = `${word(f.diff.files)} file${f.diff.files === 1 ? '' : 's'}`;
+    parts.push(f.state === 'merged' ? `${f.diff.additions} lines added, ${f.diff.deletions} removed, across ${files}.` : `${f.diff.additions} lines added, ${f.diff.deletions} removed, across ${files} on ${f.head}.`);
+  }
+  if (f.state === 'merged' && f.mergeCommit) parts.push(`Merged into ${f.base} as ${f.mergeCommit.slice(0, 7)}.`);
+  if (f.checks.total === 0) parts.push('No checks reported.');
+  else if (f.checks.passed === f.checks.total) parts.push(`${cap(word(f.checks.passed))} of ${word(f.checks.total)} checks pass.`);
+  else parts.push(`${cap(word(f.checks.passed))} of ${word(f.checks.total)} checks pass; ${word(f.checks.items.filter((c) => c.status === 'fail').length)} failing.`);
+  if (f.state === 'conflict') parts.push(`Conflicts with ${f.base}.`);
+  else if (f.state !== 'merged' && f.state !== 'closed') parts.push(`No conflicts with ${f.base}.`);
+  return parts.join(' ');
+}
+
 export function verdictSentence(f: PrFacts): string {
   const by = (v: 'approved' | 'changes' | 'pending' | 'commented') => f.reviews.items.filter((r) => r.verdict === v).map((r) => r.reviewer.name ?? r.reviewer.login);
   const parts: string[] = [];

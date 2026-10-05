@@ -1,0 +1,26 @@
+.pc-editorial {
+  --pc-bg: #f7f1e3; --pc-fg: #1a1613; --pc-muted: rgba(26,22,19,.7); --pc-faint: rgba(26,22,19,.5);
+  --pc-line: rgba(26,22,19,.55); --pc-accent: #6b1d2a; --pc-track: rgba(26,22,19,.12);
+  --pc-add: #1a1613; --pc-del: #6b1d2a; --pc-wait: #7a5a12; --pc-fail: #6b1d2a;
+  --pc-radius: 0px; --pc-pad: 22px 24px 18px;
+  --pc-font: 'Newsreader Variable', Georgia, 'Times New Roman', serif; --pc-mono: 'JetBrains Mono', ui-monospace, Menlo, monospace;
+  --pc-title-weight: 500;
+  background: var(--pc-bg); color: var(--pc-fg); font-family: var(--pc-font);
+  border: 0; border-top: 3px double var(--pc-line); border-bottom: 1px solid var(--pc-line); border-radius: 0; box-shadow: none; gap: 10px;
+}
+.pc-ed-dateline { display: flex; justify-content: space-between; font-variant: all-small-caps; letter-spacing: .08em; font-size: 13px; color: var(--pc-muted); }
+.pc-ed-headline { font-size: 24px; line-height: 1.15; letter-spacing: -0.01em; font-variation-settings: 'opsz' 24; }
+.pc-ed-body { font-size: 13.5px; line-height: 1.5; color: var(--pc-fg); -webkit-line-clamp: 4; }
+.pc-ed-figures { margin: 0; padding-bottom: 8px; border-bottom: 1px solid var(--pc-track); font-size: 13px; line-height: 1.5; }
+.pc-ed-lead { font-variant: all-small-caps; letter-spacing: .08em; color: var(--pc-accent); }
+.pc-ed-byline { font-size: 12.5px; color: var(--pc-muted); font-style: italic; }
+.pc-ed-date { font-variant: all-small-caps; letter-spacing: .08em; font-size: 12px; color: var(--pc-faint); }
+/* fallbacks for the other formats: rules, not containers */
+.pc-editorial .pc-pill { border: 0; padding: 0; text-transform: none; letter-spacing: 0; font-variant: all-small-caps; font-size: 13px; color: var(--pc-fg); }
+.pc-editorial .pc-pill svg { display: none; }
+.pc-editorial .pc-chip { background: transparent; color: var(--pc-accent); font-variant: all-small-caps; text-transform: none; letter-spacing: .08em; padding: 0; }
+.pc-editorial .pc-branches code { background: transparent; padding: 0; font-family: var(--pc-mono); font-size: 11px; }
+.pc-editorial .pc-foot { background: transparent; border-top: 1px solid var(--pc-track); }
+.pc-editorial .pc-repo-tile { display: none; }
+.pc-editorial .pc-avatar { background: var(--pc-accent); }
+.pc-editorial .pc-panel { border-radius: 0; border-color: var(--pc-track); }
