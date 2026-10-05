@@ -21,6 +21,10 @@ describe('editorial', () => {
     const f = { ...SAMPLE_FACTS, state: 'merged' as const, mergeCommit: 'a41f92c0ffee', timestamps: { ...SAMPLE_FACTS.timestamps, merged: '2026-09-16T10:00:00Z' } };
     expect(figuresSentence(f)).toMatch(/^183 lines added, 42 removed, across twelve files\. Merged into main as a41f92c\./);
   });
+  it('singular figures read as English, not as a template', () => {
+    const f = { ...SAMPLE_FACTS, diff: { additions: 1, deletions: 1, files: 1 }, checks: { passed: 1, total: 1, items: [SAMPLE_FACTS.checks.items[0]] } };
+    expect(figuresSentence(f)).toBe(`1 line added, 1 removed, across one file on ${SAMPLE_FACTS.head}. One check passes. No conflicts with ${SAMPLE_FACTS.base}.`);
+  });
   it('figuresSentence survives sparse facts', () => {
     expect(figuresSentence({ ...SAMPLE_FACTS, diff: { additions: 0, deletions: 0, files: 0 }, checks: { passed: 0, total: 0, items: [] } })).toBe('No lines changed. No checks reported. No conflicts with main.');
   });

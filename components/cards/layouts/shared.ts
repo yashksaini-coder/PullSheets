@@ -42,7 +42,7 @@ export function consequenceLine(f: PrFacts): string {
     case 'conflict': return 'rebase needed';
     case 'merged': return `merged · ${approvedOf}`;
     case 'closed': return 'closed without merging';
-    default: return `${approvedOf} · ${checksText(f)}`;
+    default: return f.reviews.requested === 0 && f.checks.total === 0 ? 'no reviews yet · no checks' : `${approvedOf} · ${checksText(f)}`;
   }
 }
 
@@ -56,10 +56,12 @@ export function figuresSentence(f: PrFacts): string {
   if (f.diff.additions + f.diff.deletions === 0) parts.push('No lines changed.');
   else {
     const files = `${word(f.diff.files)} file${f.diff.files === 1 ? '' : 's'}`;
-    parts.push(f.state === 'merged' ? `${f.diff.additions} lines added, ${f.diff.deletions} removed, across ${files}.` : `${f.diff.additions} lines added, ${f.diff.deletions} removed, across ${files} on ${f.head}.`);
+    const change = `${f.diff.additions} line${f.diff.additions === 1 ? '' : 's'} added, ${f.diff.deletions} removed, across ${files}`;
+    parts.push(f.state === 'merged' ? `${change}.` : `${change} on ${f.head}.`);
   }
   if (f.state === 'merged' && f.mergeCommit) parts.push(`Merged into ${f.base} as ${f.mergeCommit.slice(0, 7)}.`);
   if (f.checks.total === 0) parts.push('No checks reported.');
+  else if (f.checks.total === 1 && f.checks.passed === 1) parts.push('One check passes.');
   else if (f.checks.passed === f.checks.total) parts.push(`${cap(word(f.checks.passed))} of ${word(f.checks.total)} checks pass.`);
   else parts.push(`${cap(word(f.checks.passed))} of ${word(f.checks.total)} checks pass; ${word(f.checks.items.filter((c) => c.status === 'fail').length)} failing.`);
   if (f.state === 'conflict') parts.push(`Conflicts with ${f.base}.`);

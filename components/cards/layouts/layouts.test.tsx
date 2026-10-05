@@ -72,6 +72,9 @@ describe('consequenceLine', () => {
     const facts = state === 'changes' ? f({ state, reviews: { approved: 0, requested: 1, items: [{ reviewer: SAMPLE_FACTS.author, verdict: 'changes' }] } }) : f({ state });
     expect(consequenceLine(facts)).toBe(text);
   });
+  it('an untouched PR says so instead of "0 of 0 approved · checks 0/0"', () => {
+    expect(consequenceLine(SPARSE)).toBe('no reviews yet · no checks');
+  });
   it('names the failing checks when there are any', () => {
     const facts = f({ state: 'checks-failed', checks: { passed: 5, total: 7, items: [{ name: 'e2e', status: 'fail', durationSec: 1 }, { name: 'lint', status: 'fail', durationSec: 1 }, { name: 'build', status: 'pass', durationSec: 1 }] } });
     expect(consequenceLine(facts)).toBe('e2e · lint failing');
