@@ -19,4 +19,9 @@ describe('terminal', () => {
     expect(getByText('[ MERGED ]')).toBeTruthy();
     expect(getByText(/a41f92c/)).toBeTruthy();
   });
+  it('zero-diff PR shows a dimmed "(no changes)" instead of a dash-only bar', () => {
+    const { getByText, container } = render(<Card family="terminal" format="standard" facts={{ ...SAMPLE_FACTS, diff: { additions: 0, deletions: 0, files: 0 } }} />);
+    expect(getByText('(no changes)')).toBeTruthy();
+    expect(container.querySelector('.pc-term-diffstat')?.textContent).toBe('(no changes)');
+  });
 });

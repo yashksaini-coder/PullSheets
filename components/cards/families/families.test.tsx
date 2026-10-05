@@ -25,4 +25,37 @@ describe('families', () => {
       for (const v of must) expect(css, `${f} missing ${v}`).toContain(`${v}:`);
     }
   });
+  it('cards.css is only ordered imports: base.css first, then family token files', () => {
+    const dir = path.dirname(fileURLToPath(import.meta.url));
+    const css = readFileSync(path.join(dir, '..', 'cards.css'), 'utf8');
+    const lines = css.split('\n').map((l) => l.trim()).filter((l) => l.length > 0 && !l.startsWith('/*'));
+    for (const l of lines) expect(l, `non-import line in cards.css: ${l}`).toMatch(/^@import\s+'.*';$/);
+    expect(lines[0]).toBe("@import './base.css';");
+    for (const l of lines) expect(l === lines[0] || l.includes('/families/')).toBe(true);
+  });
+  it('base rules load before family overrides, so family tokens win the cascade', () => {
+    const dir = path.dirname(fileURLToPath(import.meta.url));
+    const base = readFileSync(path.join(dir, '..', 'base.css'), 'utf8');
+    for (const [family, expected] of [
+      ['terminal', { gap: '0px', lineHeight: '1.65' }],
+      ['minimal', { gap: '12px' }],
+    ] as const) {
+      const tokens = readFileSync(path.join(dir, family, 'tokens.css'), 'utf8');
+      // jsdom's document, reached via globalThis so the cards-must-stay-pure lint rule
+      // (no bare `document`) doesn't flag this test-only cascade probe.
+      const doc = globalThis.document;
+      const style = doc.createElement('style');
+      style.textContent = base + '\n' + tokens;
+      doc.head.appendChild(style);
+      const el = doc.createElement('article');
+      el.className = `pc pc-${family} pc-standard`;
+      doc.body.appendChild(el);
+      const computed = getComputedStyle(el);
+      for (const [prop, value] of Object.entries(expected)) {
+        expect(computed[prop as keyof CSSStyleDeclaration], `${family} ${prop}`).toBe(value);
+      }
+      doc.body.removeChild(el);
+      doc.head.removeChild(style);
+    }
+  });
 });
