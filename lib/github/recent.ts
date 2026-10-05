@@ -1,11 +1,11 @@
 import type { PrState } from '@/components/cards/model';
-import { githubClient, mapGitHubError } from './client';
+import { ghRequest, githubClient, mapGitHubError } from './client';
 
 export interface RecentPr { owner: string; repo: string; number: number; title: string; state: PrState; updatedAt: string }
 
 export async function listRecentPrs(token: string, login: string, client = githubClient(token)): Promise<RecentPr[]> {
   try {
-    const r = await client.rest.search.issuesAndPullRequests({ q: `is:pr author:${login}`, sort: 'updated', order: 'desc', per_page: 12, advanced_search: 'true' });
+    const r = await client.rest.search.issuesAndPullRequests({ q: `is:pr author:${login}`, sort: 'updated', order: 'desc', per_page: 12, advanced_search: 'true', request: ghRequest() });
     return r.data.items.flatMap((it) => {
       const match = /repos\/([^/]+)\/([^/]+)$/.exec(it.repository_url);
       if (!match) return [];

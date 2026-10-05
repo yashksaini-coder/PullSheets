@@ -1,5 +1,7 @@
 export interface Bucket { capacity: number; refillPerMs: number }
 
+const MAX_KEYS = 50_000;
+
 /**
  * In-memory token bucket. One instance per process — fine for a single Next server and for
  * phase 2; a multi-instance deploy moves this to Redis/Upstash behind the same `take()`.
@@ -13,6 +15,7 @@ export class TokenBucket {
 
   take(key: string): { ok: true } | { ok: false; resetAt: Date } {
     const now = this.now();
+    if (this.state.size > MAX_KEYS) this.lastGc = 0; // force a gc below regardless of the 60s guard
     this.gc(now);
     const s = this.state.get(key) ?? { tokens: this.opts.capacity, at: now };
     s.tokens = Math.min(this.opts.capacity, s.tokens + (now - s.at) * this.opts.refillPerMs);
@@ -39,6 +42,9 @@ export class TokenBucket {
 /** Anonymous `/api/pr`: 30 requests per 10 minutes per client. */
 export const anonymousPrLimiter = new TokenBucket({ capacity: 30, refillPerMs: 30 / (10 * 60 * 1000) });
 
+// ponytail: trusts the first x-forwarded-for hop. Only sound behind a proxy that overwrites XFF
+// (Vercel, Cloudflare, nginx with real_ip). A direct-exposed deploy must put one in front or this
+// limiter is bypassable by sending a random XFF per request.
 export function clientIp(req: Request): string {
   const xff = req.headers.get('x-forwarded-for');
   if (xff) return xff.split(',')[0].trim();

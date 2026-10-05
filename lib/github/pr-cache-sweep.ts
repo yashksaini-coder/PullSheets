@@ -12,7 +12,8 @@ export async function maybeSweep(store: Pick<PrCacheStore, 'sweep'>, now: () => 
   if (t - last < SWEEP_EVERY_MS) return false;
   lastRun.set(store, t);
   try {
-    await store.sweep(new Date(t - SWEEP_OLDER_THAN_MS));
+    const n = await store.sweep(new Date(t - SWEEP_OLDER_THAN_MS));
+    if (n > 0) console.info('[pr_cache] swept', n);
     return true;
   } catch (e) {
     console.error('[pr_cache] sweep failed', e);

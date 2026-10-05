@@ -1,6 +1,6 @@
 import { RequestError } from '@octokit/request-error';
 import type { PrFacts } from '@/components/cards/model';
-import { githubClient, mapGitHubError } from './client';
+import { ghRequest, githubClient, mapGitHubError } from './client';
 import { maybeSweep } from './pr-cache-sweep';
 import { dbPrCacheStore, type PrCacheRow, type PrCacheStore } from './pr-cache-store';
 import { toPrFacts } from './to-pr-facts';
@@ -39,7 +39,7 @@ export async function fetchPrFacts(ref: PrRef, opts: FetchOpts): Promise<{ facts
   try {
     // A forced refresh must hit GitHub for real: checks/reviews live on the head commit, not
     // the pull resource, so a 304 on the pull alone would short-circuit them out of a refresh.
-    const res = await gh.rest.pulls.get({ ...base, headers: row?.etag && !opts.force ? { 'if-none-match': row.etag } : {} });
+    const res = await gh.rest.pulls.get({ ...base, headers: row?.etag && !opts.force ? { 'if-none-match': row.etag } : {}, request: ghRequest() });
     pull = res.data as unknown as GhPull;
     const remainingHeader = res.headers['x-ratelimit-remaining'];
     rateRemaining = remainingHeader == null ? null : Number(remainingHeader);
@@ -57,10 +57,10 @@ export async function fetchPrFacts(ref: PrRef, opts: FetchOpts): Promise<{ facts
   let checks: GhCheckRun[];
   try {
     [reviews, files, checks] = await Promise.all([
-      gh.rest.pulls.listReviews({ ...base, per_page: 100 }).then((r) => r.data as unknown as GhReview[]),
-      gh.rest.pulls.listFiles({ ...base, per_page: 100 }).then((r) => r.data as unknown as GhFile[]),
+      gh.rest.pulls.listReviews({ ...base, per_page: 100, request: ghRequest() }).then((r) => r.data as unknown as GhReview[]),
+      gh.rest.pulls.listFiles({ ...base, per_page: 100, request: ghRequest() }).then((r) => r.data as unknown as GhFile[]),
       gh.rest.checks
-        .listForRef({ owner: ref.owner, repo: ref.repo, ref: pull.head.sha, per_page: 100 })
+        .listForRef({ owner: ref.owner, repo: ref.repo, ref: pull.head.sha, per_page: 100, request: ghRequest() })
         .then((r) => r.data.check_runs as unknown as GhCheckRun[])
         .catch((e) => {
           // Only a confirmed "no access to checks" result means no checks; anything else

@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import { getSession } from '@/lib/auth/session';
 import { getGitHubToken } from '@/lib/auth/github-token';
 import { Unauthorized, withRoute } from '@/lib/errors';
-import { githubClient, mapGitHubError } from '@/lib/github/client';
+import { ghRequest, githubClient, mapGitHubError } from '@/lib/github/client';
 import { listRecentPrs } from '@/lib/github/recent';
 
 export const GET = withRoute(async () => {
@@ -13,7 +13,7 @@ export const GET = withRoute(async () => {
   let login = session.user.githubLogin;
   if (!login) {
     try {
-      login = (await githubClient(token).rest.users.getAuthenticated()).data.login;
+      login = (await githubClient(token).rest.users.getAuthenticated({ request: ghRequest() })).data.login;
     } catch (e) {
       throw mapGitHubError(e);
     }

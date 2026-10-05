@@ -40,5 +40,23 @@ describe('mapGitHubError', () => {
     const e = mapGitHubError(mk(403, {}, 'You have exceeded a secondary rate limit'));
     expect(e.status).toBe(429);
   });
-  it('maps an aborted request to 502 github_error', () => { const e = new Error('x'); e.name = 'TimeoutError'; expect(mapGitHubError(e).status).toBe(502); expect(mapGitHubError(e).message).toMatch(/10 seconds/); });
+  it('maps a real GitHub-timeout RequestError (fetch wraps the TimeoutError as a 500 RequestError with .cause) to 502 with the 10s message', () => {
+    const cause = new Error('The operation was aborted due to timeout');
+    cause.name = 'TimeoutError';
+    const e = new RequestError('The operation was aborted due to timeout', 500, {
+      request: req,
+      response: { status: 500, url: req.url, headers: {}, data: {} },
+      cause,
+    });
+    const mapped = mapGitHubError(e);
+    expect(mapped.status).toBe(502);
+    expect(mapped.message).toMatch(/10 seconds/);
+  });
+  it('maps a bare AbortError to 502 with the 10s message', () => {
+    const e = new Error('aborted');
+    e.name = 'AbortError';
+    const mapped = mapGitHubError(e);
+    expect(mapped.status).toBe(502);
+    expect(mapped.message).toMatch(/10 seconds/);
+  });
 });

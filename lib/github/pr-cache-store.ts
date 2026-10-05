@@ -28,7 +28,7 @@ export const dbPrCacheStore: PrCacheStore = {
     await db.insert(schema.prCache).values(row).onConflictDoUpdate({ target: [schema.prCache.repo, schema.prCache.number], set });
   },
   async sweep(before) {
-    const r = await db.delete(schema.prCache).where(lt(schema.prCache.fetchedAt, before)).returning({ repo: schema.prCache.repo });
-    return r.length;
+    const r = await db.delete(schema.prCache).where(lt(schema.prCache.fetchedAt, before));
+    return r.rowCount ?? 0;
   },
 };

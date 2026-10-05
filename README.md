@@ -166,6 +166,7 @@ docs/
 - Private PRs are never served from the cache TTL; importing one costs a (conditional) GitHub call every time.
 - Only the `midnight` family and the `standard` format have a layout; the other formats are disabled in the picker until phase 2.
 - Video export, server-side renders, billing and social posting are phases 3–6; their controls say so rather than pretending.
+- **Deployment notes:** the anonymous `/api/pr` rate limit trusts the first `x-forwarded-for` hop, which is only safe behind a proxy that overwrites that header (Vercel, Cloudflare, nginx with `real_ip`) — a direct-exposed deploy needs one in front of it, or the limit is bypassable with a spoofed header.
 
 ## Roadmap
 

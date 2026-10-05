@@ -5,11 +5,21 @@ import { AppError, Forbidden, NotFound, RateLimited } from '@/lib/errors';
 export const GITHUB_TIMEOUT_MS = 10_000;
 
 export function githubClient(token: string | null) {
-  return new Octokit({ auth: token ?? undefined, userAgent: 'pullsheets/0.1', request: { signal: AbortSignal.timeout(GITHUB_TIMEOUT_MS) } });
+  return new Octokit({ auth: token ?? undefined, userAgent: 'pullsheets/0.1' });
 }
 
+/** Per-request deadline: pass as `request: ghRequest()` on every octokit call — a signal attached
+ * at client construction would be shared (and so exhausted) across every request the client makes. */
+export const ghRequest = () => ({ signal: AbortSignal.timeout(GITHUB_TIMEOUT_MS) });
+
+// Node's fetch rejects an AbortSignal.timeout with a TimeoutError, but @octokit/request's fetch
+// wrapper only rethrows unwrapped for name === 'AbortError' — a TimeoutError gets wrapped in a
+// `RequestError(message, 500)` whose own `.name` is 'HttpError' and whose `.cause` is the
+// original TimeoutError. So both the raw error and a RequestError's `.cause` must be checked.
+const aborted = (x: unknown): boolean => x instanceof Error && (x.name === 'TimeoutError' || x.name === 'AbortError');
+
 export function mapGitHubError(e: unknown): AppError {
-  if (e instanceof Error && (e.name === 'TimeoutError' || e.name === 'AbortError')) {
+  if (aborted(e) || (e instanceof RequestError && aborted(e.cause))) {
     return new AppError(502, 'github_error', 'GitHub did not answer within 10 seconds');
   }
   if (e instanceof RequestError) {
