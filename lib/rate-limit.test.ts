@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { TokenBucket, clientIp } from './rate-limit';
+import { MAX_KEYS, TokenBucket, clientIp } from './rate-limit';
 
 describe('TokenBucket', () => {
   it('allows capacity hits then refuses with a future resetAt', () => {
@@ -28,16 +28,15 @@ describe('TokenBucket', () => {
     b.take('fresh');
     expect(b.size).toBeLessThan(10);
   });
-  it('a flood past MAX_KEYS in the same millisecond still collapses once the clock advances', () => {
-    let t = 0;
-    // full refill (capacity/refillPerMs) deliberately > the 60s gc throttle, so advancing past
-    // "full" below also clears the throttle and the collapse isn't just an artifact of the test.
-    const b = new TokenBucket({ capacity: 1, refillPerMs: 1 / 70_000 }, () => t);
-    for (let i = 0; i < 60_000; i++) b.take(`k${i}`);
-    expect(b.size).toBeLessThanOrEqual(60_000); // none have refilled yet — gc has nothing to delete
-    t += 70_001; // past a full refill (and past the 60s gc throttle)
-    b.take('fresh');
-    expect(b.size).toBeLessThanOrEqual(2);
+  it('evicts the oldest keys once the map exceeds MAX_KEYS, even when nothing is idle and the clock never advances', () => {
+    const t = 0;
+    // refillPerMs: 0 — tokens never refill, so the idle gc (keyed off a full refill) can never
+    // delete anything here. Only size-triggered eviction can keep this bounded.
+    const b = new TokenBucket({ capacity: 1, refillPerMs: 0 }, () => t);
+    for (let i = 0; i <= MAX_KEYS; i++) b.take(`k${i}`);
+    expect(b.size).toBeLessThanOrEqual(MAX_KEYS);
+    expect(b.take('k0').ok).toBe(true); // the oldest key was evicted — this is a fresh bucket
+    expect(b.take(`k${MAX_KEYS}`).ok).toBe(false); // the newest key survived and is still refused
   });
 });
 

@@ -162,7 +162,7 @@ docs/
 
 ## Known limitations (phase 1)
 
-- **Anonymous `/api/pr` is unmetered.** Requests without a session spend the shared `GITHUB_PUBLIC_TOKEN` budget and insert `pr_cache` rows without bound. A per-IP limit and a cache sweep land first in phase 2 — **do not expose this branch publicly before then.**
+- **Anonymous `/api/pr` is limited to 30 requests per 10 minutes per client IP** by an in-process token bucket (state resets on deploy; move to Redis before scaling out). `pr_cache` rows older than 7 days are swept opportunistically.
 - Private PRs are never served from the cache TTL; importing one costs a (conditional) GitHub call every time.
 - Only the `midnight` family and the `standard` format have a layout; the other formats are disabled in the picker until phase 2.
 - Video export, server-side renders, billing and social posting are phases 3–6; their controls say so rather than pretending.

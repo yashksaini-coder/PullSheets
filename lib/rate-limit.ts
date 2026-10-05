@@ -1,6 +1,6 @@
 export interface Bucket { capacity: number; refillPerMs: number }
 
-const MAX_KEYS = 50_000;
+export const MAX_KEYS = 50_000;
 
 /**
  * In-memory token bucket. One instance per process — fine for a single Next server and for
@@ -15,19 +15,25 @@ export class TokenBucket {
 
   take(key: string): { ok: true } | { ok: false; resetAt: Date } {
     const now = this.now();
-    if (this.state.size > MAX_KEYS) this.lastGc = 0; // force a gc below regardless of the 60s guard
     this.gc(now);
     const s = this.state.get(key) ?? { tokens: this.opts.capacity, at: now };
     s.tokens = Math.min(this.opts.capacity, s.tokens + (now - s.at) * this.opts.refillPerMs);
     s.at = now;
+    let result: { ok: true } | { ok: false; resetAt: Date };
     if (s.tokens >= 1) {
       s.tokens -= 1;
       this.state.set(key, s);
-      return { ok: true };
+      result = { ok: true };
+    } else {
+      this.state.set(key, s);
+      const msUntilToken = this.opts.refillPerMs > 0 ? (1 - s.tokens) / this.opts.refillPerMs : Number.POSITIVE_INFINITY;
+      result = { ok: false, resetAt: new Date(now + Math.min(msUntilToken, 24 * 3600 * 1000)) };
     }
-    this.state.set(key, s);
-    const msUntilToken = this.opts.refillPerMs > 0 ? (1 - s.tokens) / this.opts.refillPerMs : Number.POSITIVE_INFINITY;
-    return { ok: false, resetAt: new Date(now + Math.min(msUntilToken, 24 * 3600 * 1000)) };
+    // The idle gc below only removes keys that have fully refilled (up to 10 min for
+    // anonymousPrLimiter) — a sustained flood of never-repeating keys would otherwise grow this
+    // map unbounded for that whole window. Real eviction caps it regardless of refill eligibility.
+    if (this.state.size > MAX_KEYS) this.evictOldest(this.state.size - Math.floor(MAX_KEYS / 2));
+    return result;
   }
 
   /** Drop keys that have fully refilled — they are indistinguishable from unseen keys. Runs at most once a minute. */
@@ -36,6 +42,14 @@ export class TokenBucket {
     this.lastGc = now;
     const full = this.opts.refillPerMs > 0 ? this.opts.capacity / this.opts.refillPerMs : Number.POSITIVE_INFINITY;
     for (const [k, s] of this.state) if (now - s.at >= full) this.state.delete(k);
+  }
+
+  // ponytail: oldest-touched eviction, not LRU-exact; keys an attacker mints never recur, and a
+  // busy legitimate IP evicted early just gets a fresh bucket. Move to Redis with TTLs before
+  // multi-instance.
+  private evictOldest(n: number) {
+    const oldest = [...this.state.entries()].sort((a, b) => a[1].at - b[1].at).slice(0, n);
+    for (const [k] of oldest) this.state.delete(k);
   }
 }
 
