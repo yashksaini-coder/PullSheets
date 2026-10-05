@@ -42,6 +42,8 @@ function EditorShell({ initialPrUrl }: { initialPrUrl?: string }) {
   const [startOver, setStartOver] = useState(false);
   const stageRef = useRef<HTMLDivElement>(null);
 
+  // `importUrl`'s identity changes with `fetching`, so this effect re-runs mid-import; the latch is
+  // what keeps a deep link from being imported twice.
   const didInit = useRef(false);
   useEffect(() => {
     if (didInit.current || !initialPrUrl) return;

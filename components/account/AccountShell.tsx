@@ -11,7 +11,7 @@ import { GitHubIcon, LinkedInIcon, XIcon } from '@/components/brand-icons';
 import { SignInGitHub } from '@/components/auth/SignInGitHub';
 import { SignOutButton } from '@/components/auth/SignOutButton';
 import { RecentPrs } from '@/components/account/RecentPrs';
-import { relativeAge } from '@/components/cards';
+import { relativeAge } from '@/components/cards/model';
 import { BACKGROUNDS, EXPORTS_KEY, bgCss, loadExports, type ExportItem } from '@/lib/data';
 import type { Features } from '@/lib/env';
 

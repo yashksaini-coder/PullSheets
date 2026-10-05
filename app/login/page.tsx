@@ -55,8 +55,13 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
               <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
                 {error && <div className="chip" role="alert">GitHub sign-in failed. Try again.</div>}
                 <SignInGitHub next={next} disabled={!features.auth} reason="Set GITHUB_CLIENT_ID and GITHUB_CLIENT_SECRET in .env.local" />
-                <Link href="#" aria-disabled="true" tabIndex={-1} title="Coming later" style={altBtnOff} className="btn-outline"><GitLabIcon />Continue with GitLab</Link>
-                <Link href="#" aria-disabled="true" tabIndex={-1} title="Coming later" style={altBtnOff} className="btn-outline"><BitbucketIcon />Continue with Bitbucket</Link>
+                {/* altBtnOff sets pointer-events:none, so the tooltip lives on the wrapper; grid makes the link fill it. */}
+                <span title="Coming later" style={{ display: 'grid' }}>
+                  <Link href="#" aria-disabled="true" tabIndex={-1} style={altBtnOff} className="btn-outline"><GitLabIcon />Continue with GitLab</Link>
+                </span>
+                <span title="Coming later" style={{ display: 'grid' }}>
+                  <Link href="#" aria-disabled="true" tabIndex={-1} style={altBtnOff} className="btn-outline"><BitbucketIcon />Continue with Bitbucket</Link>
+                </span>
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: 10, color: 'var(--muted-foreground)', fontSize: 12 }}>
                 <span style={{ flex: 1, height: 1, background: 'var(--fg-a10)' }} />or<span style={{ flex: 1, height: 1, background: 'var(--fg-a10)' }} />
